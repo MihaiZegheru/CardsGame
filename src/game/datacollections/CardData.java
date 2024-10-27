@@ -3,17 +3,41 @@ package game.datacollections;
 import java.util.ArrayList;
 
 public class CardData {
-    public final int mana;
-    public final int health;
-    public final String description;
-    public final ArrayList<String> colors;
-    public final String Name;
+    protected final int mana;
+    protected final int health;
+    protected final String description;
+    protected final ArrayList<String> colors;
+    protected final String name;
 
     public CardData(int mana, int health, String description, ArrayList<String> colors, String name) {
         this.mana = mana;
         this.health = health;
         this.description = description;
         this.colors = colors;
-        Name = name;
+        this.name = name;
+    }
+
+    public int getMana() { return mana; }
+    public int getHealth() { return health; }
+    public String getDescription() { return description; }
+    public ArrayList<String> getColors() { return colors; }
+    public String getName() { return name; }
+
+    @Override
+    public String toString() {
+        return "CardInput{"
+                +  "mana="
+                + mana
+                + ", health="
+                + health
+                +  ", description='"
+                + description
+                + '\''
+                + ", colors="
+                + colors
+                + ", name='"
+                + name
+                + '\''
+                + '}';
     }
 }
