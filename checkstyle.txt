@@ -1,0 +1,11 @@
+Starting audit...
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:7:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:7:31: Name 'GetInstance' must match pattern '^[a-z][a-zA-Z0-9]*$'. [MethodName]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:16:7: Comment matches to-do format 'TODO:'. [TodoComment]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:18:5: Class 'GameManager' looks like designed for extension (can be subclassed), but the method 'Start' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'GameManager' final or making the method 'Start' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:18:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:18:17: Name 'Start' must match pattern '^[a-z][a-zA-Z0-9]*$'. [MethodName]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:18:23: Parameter descriptor should be final. [FinalParameters]
+[ERROR] C:\Users\Mihai\_MainAccess\Java\CardsGame\.\src\game\GameManager.java:18:29: 'descriptor' hides a field. [HiddenField]
+Audit done.
+Checkstyle ends with 8 errors.
