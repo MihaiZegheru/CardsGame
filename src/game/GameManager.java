@@ -14,7 +14,7 @@ public class GameManager {
     private Input descriptor;
 
     // TODO: Return a game-end object.
-    // Hosts the main loop of the game with a game descriptor.
+    // Hosts the game entry for the game with a descriptor.
     public void Start(Input descriptor) {
         if (descriptor == null) {
             System.out.println("Descriptor not loaded.");

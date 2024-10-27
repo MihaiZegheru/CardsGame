@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
+import game.GameManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +70,8 @@ public final class Main {
 
         ArrayNode output = objectMapper.createArrayNode();
 
+        GameManager game = GameManager.GetInstance();
+        game.Start(inputData);
         /*
          * TODO Implement your function here
          *
