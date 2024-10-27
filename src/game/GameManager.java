@@ -8,4 +8,11 @@ public class GameManager {
         }
         return instance;
     }
+
+    Player playerOne;
+    Player playerTwo;
+
+    public void StartGame(Player playerOne, Player playerTwo) {
+
+    }
 }

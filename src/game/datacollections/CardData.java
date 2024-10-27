@@ -25,7 +25,7 @@ public class CardData {
 
     @Override
     public String toString() {
-        return "CardInput{"
+        return "CardData{"
                 +  "mana="
                 + mana
                 + ", health="

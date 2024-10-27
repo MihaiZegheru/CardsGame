@@ -1,11 +1,7 @@
 package game;
 
-import fileio.CardInput;
-import fileio.DecksInput;
-import fileio.Input;
-import game.datacollections.CardData;
-import game.datacollections.DeckData;
-import game.datacollections.PlayerData;
+import fileio.*;
+import game.datacollections.*;
 
 import java.util.ArrayList;
 
@@ -19,8 +15,22 @@ public class Mocker {
             System.exit(-1);
         }
 
-        Player playerOne = BuildPlayer(descriptor.getPlayerOneDecks(), "playerOne");
-        Player playerTwo = BuildPlayer(descriptor.getPlayerTwoDecks(), "playerTwo");
+        PlayerData playerOneData = BuildPlayerData(descriptor.getPlayerOneDecks(), "playerOne");
+        PlayerData playerTwoData = BuildPlayerData(descriptor.getPlayerTwoDecks(), "playerTwo");
+
+        for (GameInput gameInput : descriptor.getGames()) {
+            StartGameInput startGameState = gameInput.getStartGame();
+
+            playerOneData.setHero(BuildHeroData(startGameState.getPlayerOneHero()));
+            DeckData playerOneDeck = playerOneData.getDecks().get(startGameState.getPlayerOneDeckIdx());
+            Player playerOne = new Player(playerOneDeck, playerOneData.getHero());
+
+            playerTwoData.setHero(BuildHeroData(startGameState.getPlayerTwoHero()));
+            DeckData playerTwoDeck = playerTwoData.getDecks().get(startGameState.getPlayerTwoDeckIdx());
+            Player playerTwo = new Player(playerTwoDeck, playerTwoData.getHero());
+
+            GameManager.GetInstance().StartGame(playerOne, playerTwo);
+        }
 
         // Set null after every mock.
         descriptor = null;
@@ -29,19 +39,25 @@ public class Mocker {
     private ArrayList<DeckData> BuildDecksDataFromInputObject(DecksInput input) {
         ArrayList<DeckData> decksData = new ArrayList<>(input.getNrDecks());
         for (int i = 0; i < input.getNrDecks(); ++i) {
-            ArrayList<CardData> cardsData = new ArrayList<>(input.getNrCardsInDeck());
+            ArrayList<MinionData> minionsData = new ArrayList<>(input.getNrCardsInDeck());
             for (int j = 0; j < input.getNrCardsInDeck(); ++j) {
                 CardInput currCardInput = input.getDecks().get(i).get(j);
-                cardsData.add(new CardData(currCardInput.getMana(), currCardInput.getHealth(),
-                        currCardInput.getDescription(), currCardInput.getColors(), currCardInput.getName()));
+                minionsData.add(new MinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),
+                        currCardInput.getHealth(), currCardInput.getDescription(), currCardInput.getColors(),
+                        currCardInput.getName()));
             }
-            decksData.add(new DeckData(cardsData));
+            decksData.add(new DeckData(minionsData));
         }
         return decksData;
     }
 
-    private Player BuildPlayer(DecksInput decksDescriptor, String name) {
-        PlayerData playerData = new PlayerData(BuildDecksDataFromInputObject(decksDescriptor), name);
-        return new Player(playerData);
+    private PlayerData BuildPlayerData(DecksInput decksDescriptor, String name) {
+        return new PlayerData(BuildDecksDataFromInputObject(decksDescriptor), name);
     }
+
+    private HeroData BuildHeroData(CardInput heroDescriptor) {
+        return new HeroData(heroDescriptor.getMana(), heroDescriptor.getHealth(), heroDescriptor.getDescription(),
+                heroDescriptor.getColors(), heroDescriptor.getName());
+    }
+
 }

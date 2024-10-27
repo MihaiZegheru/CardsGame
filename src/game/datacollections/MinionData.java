@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class MinionData extends CardData {
     protected final int attackDamage;
 
-    public MinionData(int mana, int health, String description, ArrayList<String> colors, String name,
-                      int attackDamage) {
+    public MinionData(int mana, int attackDamage, int health, String description, ArrayList<String> colors,
+                      String name) {
         super(mana, health, description, colors, name);
         this.attackDamage = attackDamage;
     }
@@ -15,7 +15,7 @@ public class MinionData extends CardData {
 
     @Override
     public String toString() {
-        return "CardInput{"
+        return "MinionData{"
                 +  "mana="
                 + mana
                 +  ", attackDamage="

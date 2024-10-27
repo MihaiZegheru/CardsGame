@@ -20,7 +20,7 @@ public class PlayerData {
 
     @Override
     public String toString() {
-        return "InfoInput{"
+        return "PlayerData{"
                 + "name="
                 + name
                 + ", Hero="
