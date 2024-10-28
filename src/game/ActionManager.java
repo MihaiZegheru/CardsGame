@@ -23,6 +23,7 @@ public class ActionManager {
         objectNode.put("command", action.getCommand());
 
         return switch (action.getCommand()) {
+            case "cardUsesAttack" -> Optional.ofNullable(CardUsesAttack(action, objectNode));
             case "getCardsInHand" -> Optional.of(GetCardsInHand(action, objectNode));
             case "getCardsOnTable" -> Optional.of(GetCardsOnTable(action, objectNode));
             case "getPlayerDeck" -> Optional.of(GetPlayerDeck(action, objectNode));
@@ -92,6 +93,18 @@ public class ActionManager {
             return null;
         }
         objectNode.put("handIdx", action.getHandIdx());
+        objectNode.put("error", response.toString());
+        return objectNode;
+    }
+
+    private ObjectNode CardUsesAttack(ActionsInput action, ObjectNode objectNode) {
+        Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
+        if (response.isOk()) {
+            return null;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectNode.put("cardAttacker", objectMapper.valueToTree(action.getCardAttacker()));
+        objectNode.put("cardAttacked", objectMapper.valueToTree(action.getCardAttacked()));
         objectNode.put("error", response.toString());
         return objectNode;
     }

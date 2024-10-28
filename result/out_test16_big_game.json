@@ -42,20 +42,6 @@
     "description" : "Standard card: A drink can always be served, with the blood of his enemies.",
     "mana" : 2,
     "colors" : [ "Red", "Blue", "Pink" ]
-  }, {
-    "health" : 2,
-    "attackDamage" : 2,
-    "name" : "Sentinel",
-    "description" : "Standard card: Trained by the best, nothing will catch him off-guard.",
-    "mana" : 1,
-    "colors" : [ "Black", "Grey", "Blue" ]
-  }, {
-    "health" : 4,
-    "attackDamage" : 0,
-    "name" : "Disciple",
-    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
-    "mana" : 2,
-    "colors" : [ "Green", "Yellow", "Blue" ]
   } ], [ {
     "health" : 4,
     "attackDamage" : 5,
@@ -64,14 +50,14 @@
     "mana" : 3,
     "colors" : [ "Black", "Yellow" ]
   } ], [ {
-    "health" : 3,
+    "health" : 1,
     "attackDamage" : 6,
     "name" : "The Ripper",
     "description" : "Premium card: Ravished by the winds of hell, no soul is to be forgiven.",
     "mana" : 3,
     "colors" : [ "Orange", "Red", "Black" ]
   }, {
-    "health" : 6,
+    "health" : 2,
     "attackDamage" : 2,
     "name" : "Warden",
     "description" : "Premium card: You shall not pass, you shall not prevail, you shall perish.",

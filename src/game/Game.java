@@ -1,13 +1,15 @@
 package game;
 
 
+import fileio.Coordinates;
 import game.datacollections.MinionData;
+import utility.Status;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import static utility.Math.clamp;
+import static utility.Math.Clamp;
 
 public class Game {
     private static final int MAX_COLUMNS = 5;
@@ -60,11 +62,57 @@ public class Game {
 
     private void StartRound() {
         currRound++;
-        manaRate = clamp(manaRate + 1, 0, 10);
+        manaRate = Clamp(manaRate + 1, 0, 10);
         playerOne.DrawCard();
         playerTwo.DrawCard();
         playerOne.IncreaseCurrMana(manaRate);
         playerTwo.IncreaseCurrMana(manaRate);
+    }
+
+    public Status AttackFromAt(Player attacker, Coordinates atkrCoords, Coordinates atkdCoords) {
+        // TODO: Add tank as frontline. This should be refactored such that the player owns these cards and this stays
+        // the middle man
+        Player attacked;
+        if (attacker == playerOne) {
+            attacked = playerTwo;
+        } else {
+            attacked = playerOne;
+        }
+
+        if (!attacker.OwnsCoords(atkrCoords)) {
+            return Status.notOwnAttackerCard();
+        }
+        if (!attacked.OwnsCoords(atkdCoords)) {
+            return Status.ownsAttackedCard();
+        }
+
+        System.out.println(board);
+        Minion attackerCard = GetCardAtCoords(atkrCoords);
+        if (attackerCard == null) {
+            return Status.aborted();
+        }
+        if (attackerCard.getHasAttacked()) {
+            return Status.cardHasAttacked();
+        }
+        if (attackerCard.getIsFrozen()) {
+            return Status.cardIsFrozen();
+        }
+
+        Minion attackedCard = GetCardAtCoords(atkdCoords);
+        if (attackedCard == null) {
+            return Status.aborted();
+        }
+
+        attackedCard.OnAttacked(attackerCard.getAttackDamage());
+        return Status.ok();
+    }
+
+    public void OnMinionDeath(Minion minion) {
+        for (ArrayList<Minion> row : board) {
+            if (row.remove(minion)) {
+                return;
+            }
+        }
     }
 
     public Minion PlaceCard(Player player, MinionData card) {
@@ -92,6 +140,13 @@ public class Game {
             return;
         }
         board.get(row).add(card);
+    }
+
+    private Minion GetCardAtCoords(Coordinates coords) {
+        if (board.size() <= coords.getX() || board.get(coords.getX()).size() <= coords.getY()) {
+            return null;
+        }
+        return board.get(coords.getX()).get(coords.getY());
     }
 
     public int getPlayerAtTurnId() { return playerAtTurnId; }

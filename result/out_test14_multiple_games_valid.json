@@ -136,14 +136,7 @@
     "mana" : 2,
     "colors" : [ "Orange", "Red", "Black" ]
   }, {
-    "health" : 5,
-    "attackDamage" : 8,
-    "name" : "Warden",
-    "description" : "Standard card: He has seen everything, his mind has never been asleep since the making of the realm.",
-    "mana" : 1,
-    "colors" : [ "Black", "White", "Green" ]
-  }, {
-    "health" : 7,
+    "health" : 1,
     "attackDamage" : 5,
     "name" : "Goliath",
     "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
@@ -170,13 +163,6 @@
     "description" : "Premium card: No matter how many, his body will fight. Save your breath for the Mountain is strong.",
     "mana" : 2,
     "colors" : [ "Red", "Purple" ]
-  }, {
-    "health" : 6,
-    "attackDamage" : 8,
-    "name" : "Warden",
-    "description" : "Standard card: He has seen everything, his mind has never been asleep since the making of the realm.",
-    "mana" : 2,
-    "colors" : [ "Brown", "Blue" ]
   }, {
     "health" : 6,
     "attackDamage" : 7,
@@ -268,6 +254,17 @@
 }, {
   "command" : "getPlayerTurn",
   "output" : 1
+}, {
+  "command" : "cardUsesAttack",
+  "cardAttacker" : {
+    "x" : 0,
+    "y" : 0
+  },
+  "cardAttacked" : {
+    "x" : 2,
+    "y" : 3
+  },
+  "error" : "Aborted."
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
@@ -381,20 +378,6 @@
     "mana" : 1,
     "colors" : [ "Orange", "Red", "Black" ]
   }, {
-    "health" : 5,
-    "attackDamage" : 8,
-    "name" : "Warden",
-    "description" : "Standard card: He has seen everything, his mind has never been asleep since the making of the realm.",
-    "mana" : 1,
-    "colors" : [ "Black", "White", "Green" ]
-  }, {
-    "health" : 8,
-    "attackDamage" : 4,
-    "name" : "Goliath",
-    "description" : "Premium card: No matter how many, his body will fight. Save your breath for the Mountain is strong.",
-    "mana" : 2,
-    "colors" : [ "Brown", "Black", "Grey" ]
-  }, {
     "health" : 7,
     "attackDamage" : 5,
     "name" : "Goliath",
@@ -422,13 +405,6 @@
     "description" : "Premium card: Ravished by the winds of hell, no soul is to be forgiven.",
     "mana" : 1,
     "colors" : [ "Orange", "Red", "Black" ]
-  }, {
-    "health" : 4,
-    "attackDamage" : 5,
-    "name" : "Miraj",
-    "description" : "Standard card: When he is near, close your eyes. They betray your mind.",
-    "mana" : 1,
-    "colors" : [ "Yellow", "Orange", "Red" ]
   }, {
     "health" : 5,
     "attackDamage" : 7,

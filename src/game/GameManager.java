@@ -1,5 +1,6 @@
 package game;
 
+import fileio.Coordinates;
 import game.datacollections.DeckData;
 import game.datacollections.PlayerData;
 import utility.Status;
@@ -43,6 +44,9 @@ public class GameManager {
     public void EndPlayerTurn() { getPlayer(game.getPlayerAtTurnId()).EndTurn(); }
 
     public Status PlaceCard(int idx) { return getPlayer(game.getPlayerAtTurnId()).PlaceCard(idx); }
+
+    public Status UseMinionAttack(Coordinates atkrCoords, Coordinates atkdCoords) {
+        return getPlayer(game.getPlayerAtTurnId()).UseMinionAttack(atkrCoords, atkdCoords); }
 
     public int getPlayerAtTurnId() { return game.getPlayerAtTurnId(); }
 

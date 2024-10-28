@@ -1,5 +1,6 @@
 package game;
 
+import fileio.Coordinates;
 import game.datacollections.*;
 import utility.Status;
 
@@ -60,8 +61,19 @@ public class Player {
         return Status.ok();
     }
 
+    public Status UseMinionAttack(Coordinates atkrCoords, Coordinates atkdCoords) {
+        if (!OwnsCoords(atkrCoords)) {
+            return Status.aborted();
+        }
+        return GameManager.GetInstance().getGame().AttackFromAt(this, atkrCoords, atkdCoords);
+    }
+
     public void EndTurn() {
         GameManager.GetInstance().getGame().OnEndPlayerTurn(this);
+    }
+
+    public boolean OwnsCoords(Coordinates coords) {
+        return coords.getX() == tankRow || coords.getX() == ddRow;
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }

@@ -13,5 +13,10 @@ public class Minion extends Card {
         this.attackDamage = data.getAttackDamage();
     }
 
+    @Override
+    protected void OnDied() {
+        GameManager.GetInstance().getGame().OnMinionDeath(this);
+    }
+
     public int getAttackDamage() { return attackDamage; }
 }

@@ -34,13 +34,6 @@
     "mana" : 2,
     "colors" : [ "Pink", "Purple" ]
   }, {
-    "health" : 2,
-    "attackDamage" : 2,
-    "name" : "Sentinel",
-    "description" : "Premium card: His presence is not known even by ghosts, success at all costs.",
-    "mana" : 1,
-    "colors" : [ "Black", "White" ]
-  }, {
     "health" : 1,
     "attackDamage" : 3,
     "name" : "Berserker",
@@ -48,13 +41,6 @@
     "mana" : 1,
     "colors" : [ "Purple", "Yellow" ]
   } ], [ {
-    "health" : 8,
-    "attackDamage" : 2,
-    "name" : "Goliath",
-    "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
-    "mana" : 3,
-    "colors" : [ "Brown", "Black", "Grey" ]
-  }, {
     "health" : 3,
     "attackDamage" : 4,
     "name" : "Miraj",
@@ -62,20 +48,6 @@
     "mana" : 4,
     "colors" : [ "Yellow", "Orange", "Red" ]
   } ], [ {
-    "health" : 5,
-    "attackDamage" : 3,
-    "name" : "Warden",
-    "description" : "Premium card: You shall not pass, you shall not prevail, you shall perish.",
-    "mana" : 3,
-    "colors" : [ "Brown", "Blue" ]
-  }, {
-    "health" : 7,
-    "attackDamage" : 2,
-    "name" : "Goliath",
-    "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
-    "mana" : 3,
-    "colors" : [ "Red", "Purple" ]
-  }, {
     "health" : 3,
     "attackDamage" : 4,
     "name" : "Miraj",
@@ -83,13 +55,6 @@
     "mana" : 4,
     "colors" : [ "Red", "Black" ]
   } ], [ {
-    "health" : 3,
-    "attackDamage" : 1,
-    "name" : "Sentinel",
-    "description" : "Standard card: Trained by the best, nothing will catch him off-guard.",
-    "mana" : 2,
-    "colors" : [ "Black", "Grey", "Blue" ]
-  }, {
     "health" : 2,
     "attackDamage" : 0,
     "name" : "Disciple",
