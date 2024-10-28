@@ -2,10 +2,12 @@ package game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.*;
 import game.datacollections.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Mocker {
     // TODO: Return a game-end object.
@@ -27,18 +29,20 @@ public class Mocker {
             StartGameInput startGameState = gameInput.getStartGame();
 
             playerOneData.setHero(BuildHeroData(startGameState.getPlayerOneHero()));
-            DeckData playerOneDeck = playerOneData.getDecks().get(startGameState.getPlayerOneDeckIdx());
-            Player playerOne = new Player(playerOneData, playerOneDeck);
+            int playerOneDeckIdx = startGameState.getPlayerOneDeckIdx();
 
             playerTwoData.setHero(BuildHeroData(startGameState.getPlayerTwoHero()));
-            DeckData playerTwoDeck = playerTwoData.getDecks().get(startGameState.getPlayerTwoDeckIdx());
-            Player playerTwo = new Player(playerTwoData, playerTwoDeck);
+            int playerTwoDeckIdx = startGameState.getPlayerTwoDeckIdx();
 
-            GameManager.GetInstance().StartGame(playerOne, playerTwo, startGameState.getStartingPlayer(),
-                    startGameState.getShuffleSeed());
+            GameManager.GetInstance().StartGame(playerOneData, playerOneDeckIdx, playerTwoData, playerTwoDeckIdx,
+                    startGameState.getStartingPlayer(), startGameState.getShuffleSeed());
 
             for (ActionsInput action : gameInput.getActions()) {
-                arrayNode.add(ActionManager.GetInstance().HandleAction(action));
+                Optional<ObjectNode> node = ActionManager.GetInstance().HandleAction(action);
+                if (node.isEmpty()) {
+                    continue;
+                }
+                arrayNode.add(node.get());
             }
         }
 

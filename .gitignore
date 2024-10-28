@@ -24,6 +24,6 @@ hs_err_pid*
 replay_pid*
 
 # Project
-./result/*
-./out/*
+result/
+out/
 checkstyle.txt

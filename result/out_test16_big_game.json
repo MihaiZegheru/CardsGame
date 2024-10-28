@@ -1,135 +1,58 @@
 [ {
-  "command" : "getPlayerTurn"
-}, {
-  "command" : "getFrozenCardsOnTable"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "getFrozenCardsOnTable"
-}, {
-  "command" : "getPlayerMana"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getFrozenCardsOnTable"
-}, {
-  "command" : "getPlayerMana"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "getPlayerTurn"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getCardAtPosition"
-}, {
-  "command" : "getPlayerTurn"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getCardAtPosition"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useHeroAbility"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getCardAtPosition"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "getPlayerMana"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getCardAtPosition"
-}, {
-  "command" : "getPlayerTurn"
-}, {
-  "command" : "useHeroAbility"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "getPlayerTurn"
-}, {
-  "command" : "getFrozenCardsOnTable"
-}, {
-  "command" : "getPlayerMana"
-}, {
-  "command" : "useHeroAbility"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "getCardAtPosition"
-}, {
-  "command" : "getFrozenCardsOnTable"
-}, {
-  "command" : "getPlayerMana"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "cardUsesAbility"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "endPlayerTurn"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "placeCard"
-}, {
-  "command" : "cardUsesAttack"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "useAttackHero"
-}, {
-  "command" : "getCardsOnTable"
-}, {
-  "command" : "getCardsInHand"
-}, {
-  "command" : "getCardsInHand"
-}, {
-  "command" : "getTotalGamesPlayed"
-}, {
-  "command" : "getPlayerTwoWins"
-}, {
-  "command" : "getPlayerOneWins"
+  "command" : "getPlayerTurn",
+  "playerIdx" : 1
+}, {
+  "command" : "getPlayerMana",
+  "playerIdx" : 2,
+  "output" : 1
+}, {
+  "command" : "getPlayerMana",
+  "playerIdx" : 1,
+  "output" : 0
+}, {
+  "command" : "getPlayerTurn",
+  "playerIdx" : 1
+}, {
+  "command" : "getPlayerTurn",
+  "playerIdx" : 2
+}, {
+  "command" : "getPlayerMana",
+  "playerIdx" : 1,
+  "output" : 0
+}, {
+  "command" : "getPlayerTurn",
+  "playerIdx" : 2
+}, {
+  "command" : "getPlayerTurn",
+  "playerIdx" : 1
+}, {
+  "command" : "getPlayerMana",
+  "playerIdx" : 1,
+  "output" : 3
+}, {
+  "command" : "getPlayerMana",
+  "playerIdx" : 2,
+  "output" : 7
+}, {
+  "command" : "getCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
+}, {
+  "command" : "getCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ {
+    "mana" : 4,
+    "health" : 3,
+    "description" : "Premium card: Insanity is always an option, now it is an absolute.",
+    "colors" : [ "Yellow", "Orange", "Red" ],
+    "name" : "Miraj",
+    "attackDamage" : 5
+  }, {
+    "mana" : 4,
+    "health" : 3,
+    "description" : "Standard card: When he is near, close your eyes. They betray your mind.",
+    "colors" : [ "Red", "Black" ],
+    "name" : "Miraj",
+    "attackDamage" : 5
+  } ]
 } ]
