@@ -1,6 +1,7 @@
 package game;
 
 import game.datacollections.*;
+import utility.Status;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -42,23 +43,21 @@ public class Player {
         currMana += inc;
     }
 
-    public void PlaceCard(int idx) {
+    public Status PlaceCard(int idx) {
         if (idx >= handCards.size()) {
-            System.out.println("Card idx out of bounds.");
-            return;
+            return Status.outOfRange();
         }
         if (handCards.get(idx).getMana() > currMana) {
-            System.out.println("Not enough mana to cast that.");
-            return;
+            return Status.notEnoughManaToPlace();
         }
         Minion placedMinion = GameManager.GetInstance().getGame().PlaceCard(this, handCards.get(idx));
         if (placedMinion == null) {
-            System.out.println("Not player's turn.");
-            return;
+            return Status.aborted();
         }
         currMana -= handCards.get(idx).getMana();
         boardCards.add(placedMinion);
         handCards.remove(idx);
+        return Status.ok();
     }
 
     public void EndTurn() {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
+import utility.Status;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,10 +33,7 @@ public class ActionManager {
                 GameManager.GetInstance().EndPlayerTurn();
                 yield Optional.empty();
             }
-            case "placeCard" -> {
-                GameManager.GetInstance().PlaceCard(action.getHandIdx());
-                yield Optional.empty();
-            }
+            case "placeCard" -> Optional.ofNullable(PlaceCard(action, objectNode));
             default -> {
                 System.out.println("Action " + action.getCommand() + " not implemented yet.");
                 yield Optional.empty();
@@ -85,6 +83,16 @@ public class ActionManager {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.valueToTree(GameManager.GetInstance().getGame().getBoard());
         objectNode.put("output", arrayNode);
+        return objectNode;
+    }
+
+    private ObjectNode PlaceCard(ActionsInput action, ObjectNode objectNode) {
+        Status response = GameManager.GetInstance().PlaceCard(action.getHandIdx());
+        if (response.isOk()) {
+            return null;
+        }
+        objectNode.put("handIdx", action.getHandIdx());
+        objectNode.put("error", response.toString());
         return objectNode;
     }
 

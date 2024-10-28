@@ -2,6 +2,7 @@ package game;
 
 import game.datacollections.DeckData;
 import game.datacollections.PlayerData;
+import utility.Status;
 
 public class GameManager {
     private static GameManager instance = null;
@@ -41,7 +42,7 @@ public class GameManager {
 
     public void EndPlayerTurn() { getPlayer(game.getPlayerAtTurnId()).EndTurn(); }
 
-    public void PlaceCard(int idx) { getPlayer(game.getPlayerAtTurnId()).PlaceCard(idx); }
+    public Status PlaceCard(int idx) { return getPlayer(game.getPlayerAtTurnId()).PlaceCard(idx); }
 
     public int getPlayerAtTurnId() { return game.getPlayerAtTurnId(); }
 
