@@ -4,11 +4,10 @@ import checker.Checker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
-import fileio.GameInput;
 import fileio.Input;
-import game.GameManager;
 import game.Mocker;
 
 import java.io.File;
@@ -66,12 +65,12 @@ public final class Main {
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         Input inputData = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH + filePath1),
                 Input.class);
 
         Mocker mocker = new Mocker();
-        ArrayNode output = mocker.Mock(inputData);
+        ArrayNode output = mocker.Mock(inputData, objectMapper);
 
         /*
          * TODO Implement your function here

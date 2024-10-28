@@ -36,7 +36,7 @@
   } ]
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
 }, {
   "command" : "getCardsInHand",
   "playerIdx" : 2,
@@ -68,7 +68,7 @@
   } ]
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
@@ -79,7 +79,80 @@
   "output" : 11
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
+}, {
+  "command" : "getCardsOnTable",
+  "output" : [ [ {
+    "health" : 3,
+    "attackDamage" : 0,
+    "name" : "The Cursed One",
+    "description" : "Standard card: Thrown from the highest cliff, revenge will be his glory.",
+    "mana" : 3,
+    "colors" : [ "Black", "White", "Red" ]
+  }, {
+    "health" : 4,
+    "attackDamage" : 0,
+    "name" : "Disciple",
+    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
+    "mana" : 2,
+    "colors" : [ "Green", "Yellow", "Blue" ]
+  } ], [ {
+    "health" : 5,
+    "attackDamage" : 3,
+    "name" : "Warden",
+    "description" : "Standard card: He has seen everything, his mind has never been asleep since the making of the realm.",
+    "mana" : 3,
+    "colors" : [ "Black", "White", "Green" ]
+  }, {
+    "health" : 3,
+    "attackDamage" : 4,
+    "name" : "Miraj",
+    "description" : "Premium card: Insanity is always an option, now it is an absolute.",
+    "mana" : 4,
+    "colors" : [ "Yellow", "Orange", "Red" ]
+  }, {
+    "health" : 5,
+    "attackDamage" : 2,
+    "name" : "Warden",
+    "description" : "Premium card: You shall not pass, you shall not prevail, you shall perish.",
+    "mana" : 2,
+    "colors" : [ "Black", "White", "Green" ]
+  } ], [ ], [ {
+    "health" : 1,
+    "attackDamage" : 0,
+    "name" : "The Cursed One",
+    "description" : "Standard card: Thrown from the highest cliff, revenge will be his glory.",
+    "mana" : 3,
+    "colors" : [ "Black", "White", "Red" ]
+  }, {
+    "health" : 2,
+    "attackDamage" : 1,
+    "name" : "Sentinel",
+    "description" : "Premium card: His presence is not known even by ghosts, success at all costs.",
+    "mana" : 1,
+    "colors" : [ "Black", "White" ]
+  }, {
+    "health" : 2,
+    "attackDamage" : 2,
+    "name" : "Berserker",
+    "description" : "Premium card: Fear him. Your last breath is now.",
+    "mana" : 2,
+    "colors" : [ "Red", "Blue", "Pink" ]
+  }, {
+    "health" : 2,
+    "attackDamage" : 0,
+    "name" : "Disciple",
+    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
+    "mana" : 2,
+    "colors" : [ "Yellow", "White" ]
+  }, {
+    "health" : 2,
+    "attackDamage" : 0,
+    "name" : "Disciple",
+    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
+    "mana" : 2,
+    "colors" : [ "Yellow", "White" ]
+  } ] ]
 }, {
   "command" : "getCardsInHand",
   "playerIdx" : 2,

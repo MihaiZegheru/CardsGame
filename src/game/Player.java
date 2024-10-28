@@ -17,9 +17,12 @@ public class Player {
     private ArrayList<Minion> boardCards;
     private Hero hero;
 
+    private int ddRow;
+    private int tankRow;
+
     private int currMana;
 
-    public Player(PlayerData data, DeckData deckData, int id) {
+    public Player(PlayerData data, DeckData deckData, int ddRow, int tankRow, int id) {
         this.data = data;
         this.deckCards = new LinkedList<>();
         this.deckCards.addAll(deckData.getCards());
@@ -27,6 +30,8 @@ public class Player {
         this.boardCards = new ArrayList<>();
         this.hero = new Hero(data.getHero());
         this.id = id;
+        this.ddRow = ddRow;
+        this.tankRow = tankRow;
     }
 
     public void DrawCard() {
@@ -46,7 +51,7 @@ public class Player {
             System.out.println("Not enough mana to cast that.");
             return;
         }
-        Minion placedMinion = GameManager.GetInstance().getBoard().PlaceCard(this, handCards.get(idx));
+        Minion placedMinion = GameManager.GetInstance().getGame().PlaceCard(this, handCards.get(idx));
         if (placedMinion == null) {
             System.out.println("Not player's turn.");
             return;
@@ -57,7 +62,7 @@ public class Player {
     }
 
     public void EndTurn() {
-        GameManager.GetInstance().getBoard().OnEndPlayerTurn(this);
+        GameManager.GetInstance().getGame().OnEndPlayerTurn(this);
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }
@@ -65,6 +70,8 @@ public class Player {
     public HeroData getHeroData() { return data.getHero(); }
     public int getCurrMana() { return currMana; }
     public int getId() { return id; }
+    public int getDdRow() {return ddRow; }
+    public int getTankRow() { return tankRow; }
 
     @Override
     public String toString() {

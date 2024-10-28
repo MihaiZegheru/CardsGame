@@ -12,19 +12,19 @@ public class GameManager {
         return instance;
     }
 
-    private Game board;
+    private Game game;
     private Player playerOne;
     private Player playerTwo;
 
     public void StartGame(PlayerData playerOneData, int playerOneDeckIdx, PlayerData playerTwoData,
                           int playerTwoDeckIdx, int startingPlayerId, int seed) {
         DeckData playerOneDeck = playerOneData.getDecks().get(playerOneDeckIdx);
-        this.playerOne = new Player(playerOneData, playerOneDeck, 1);
+        this.playerOne = new Player(playerOneData, playerOneDeck, 3, 2, 1);
 
         DeckData playerTwoDeck = playerTwoData.getDecks().get(playerTwoDeckIdx);
-        this.playerTwo = new Player(playerTwoData, playerTwoDeck, 2);
+        this.playerTwo = new Player(playerTwoData, playerTwoDeck, 0,1, 2);
 
-        this.board = new Game(playerOne, playerTwo, startingPlayerId, seed);
+        this.game = new Game(playerOne, playerTwo, startingPlayerId, seed);
     }
 
     // Can return null
@@ -39,11 +39,11 @@ public class GameManager {
         return null;
     }
 
-    public void EndPlayerTurn() { getPlayer(board.getPlayerAtTurnId()).EndTurn(); }
+    public void EndPlayerTurn() { getPlayer(game.getPlayerAtTurnId()).EndTurn(); }
 
-    public void PlaceCard(int idx) { getPlayer(board.getPlayerAtTurnId()).PlaceCard(idx); }
+    public void PlaceCard(int idx) { getPlayer(game.getPlayerAtTurnId()).PlaceCard(idx); }
 
-    public int getPlayerAtTurnId() { return board.getPlayerAtTurnId(); }
+    public int getPlayerAtTurnId() { return game.getPlayerAtTurnId(); }
 
-    public Game getBoard() { return board; }
+    public Game getGame() { return game; }
 }

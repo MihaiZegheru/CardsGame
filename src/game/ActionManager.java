@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ActionManager {
@@ -16,13 +17,13 @@ public class ActionManager {
         return instance;
     }
 
-    public Optional<ObjectNode> HandleAction(ActionsInput action) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public Optional<ObjectNode> HandleAction(ActionsInput action, ObjectMapper objectMapper) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", action.getCommand());
 
         return switch (action.getCommand()) {
             case "getCardsInHand" -> Optional.of(GetCardsInHand(action, objectNode));
+            case "getCardsOnTable" -> Optional.of(GetCardsOnTable(action, objectNode));
             case "getPlayerDeck" -> Optional.of(GetPlayerDeck(action, objectNode));
             case "getPlayerHero" -> Optional.of(GetPlayerHero(action, objectNode));
             case "getPlayerMana" -> Optional.of(GetPlayerMana(action, objectNode));
@@ -60,7 +61,7 @@ public class ActionManager {
     }
 
     private ObjectNode GetPlayerTurn(ObjectNode objectNode) {
-        objectNode.put("playerIdx", GameManager.GetInstance().getPlayerAtTurnId());
+        objectNode.put("output", GameManager.GetInstance().getPlayerAtTurnId());
         return objectNode;
     }
 
@@ -77,6 +78,13 @@ public class ActionManager {
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
         objectNode.put("output", player.getCurrMana());
+        return objectNode;
+    }
+
+    private ObjectNode GetCardsOnTable(ActionsInput action, ObjectNode objectNode) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.valueToTree(GameManager.GetInstance().getGame().getBoard());
+        objectNode.put("output", arrayNode);
         return objectNode;
     }
 

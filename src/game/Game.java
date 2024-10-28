@@ -3,12 +3,15 @@ package game;
 
 import game.datacollections.MinionData;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
 import static utility.Math.clamp;
 
 public class Game {
+    private static final int MAX_COLUMNS = 5;
+
     private Player playerOne;
     private Player playerTwo;
     private int playerAtTurnId;
@@ -16,6 +19,7 @@ public class Game {
 
     private final int startingPlayerId;
     private int currRound;
+    private ArrayList<ArrayList<Minion>> board;
 
     private int manaRate;
 
@@ -27,6 +31,12 @@ public class Game {
         this.startingPlayerId = startingPlayerId;
         this.currRound = 0;
         this.manaRate = 0;
+
+        this.board = new ArrayList<>();
+        this.board.add(new ArrayList<>());
+        this.board.add(new ArrayList<>());
+        this.board.add(new ArrayList<>());
+        this.board.add(new ArrayList<>());
 
         Collections.shuffle(playerOne.getDeckCardsData(), new Random(seed));
         Collections.shuffle(playerTwo.getDeckCardsData(), new Random(seed));
@@ -42,7 +52,7 @@ public class Game {
 
         // TODO: Unfreeze cards of caller
 
-        playerAtTurnId = GetNextTurnPlayer();
+        playerAtTurnId = getNextTurnPlayer();
         if (playerAtTurnId == startingPlayerId) {
             StartRound();
         }
@@ -63,12 +73,42 @@ public class Game {
             return null;
         }
 
-        // TODO: Add card to board grid
+        Minion minion =  new Minion(card);
+        switch (ResolveCardType(card)) {
+            case DAMAGE_DEALER:
+                PlaceMinion(player.getDdRow(), board.get(player.getDdRow()).size(), minion);
+                break;
+            case TANK:
+                PlaceMinion(player.getTankRow(), board.get(player.getTankRow()).size(), minion);
+                break;
+        }
 
-        return new Minion(card);
+        return minion;
+    }
+
+    private void PlaceMinion(int row, int col, Minion card) {
+        if (col >= MAX_COLUMNS) {
+            System.out.println("Row already full.");
+            return;
+        }
+        board.get(row).add(card);
     }
 
     public int getPlayerAtTurnId() { return playerAtTurnId; }
 
-    private int GetNextTurnPlayer() { return playerAtTurnId % 2 + 1; }
+    private int getNextTurnPlayer() { return playerAtTurnId % 2 + 1; }
+
+    public ArrayList<ArrayList<Minion>> getBoard() { return board; }
+
+
+    private CardType ResolveCardType(MinionData card) {
+        return switch (card.getName()) {
+            case "Sentinel", "Berserker", "The Cursed One", "Disciple" -> CardType.DAMAGE_DEALER;
+            case "Goliath", "Warden", "The Ripper", "Miraj" -> CardType.TANK;
+            default -> {
+                System.out.println("Card " + card + " implementation does not exist.");
+                yield CardType.DEFAULT;
+            }
+        };
+    }
 }

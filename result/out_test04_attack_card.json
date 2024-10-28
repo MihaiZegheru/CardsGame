@@ -22,7 +22,7 @@
   "output" : 3
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 1
+  "output" : 1
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
@@ -33,7 +33,24 @@
   "output" : 3
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
+}, {
+  "command" : "getCardsOnTable",
+  "output" : [ [ {
+    "health" : 4,
+    "attackDamage" : 0,
+    "name" : "Disciple",
+    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
+    "mana" : 3,
+    "colors" : [ "Yellow", "White" ]
+  } ], [ ], [ ], [ {
+    "health" : 1,
+    "attackDamage" : 0,
+    "name" : "The Cursed One",
+    "description" : "Standard card: Thrown from the highest cliff, revenge will be his glory.",
+    "mana" : 3,
+    "colors" : [ "Black", "White", "Red" ]
+  } ] ]
 }, {
   "command" : "getCardsInHand",
   "playerIdx" : 2,

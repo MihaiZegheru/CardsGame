@@ -84,5 +84,5 @@
   }
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
 } ]

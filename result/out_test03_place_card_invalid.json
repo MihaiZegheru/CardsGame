@@ -36,7 +36,7 @@
   } ]
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
 }, {
   "command" : "getCardsInHand",
   "playerIdx" : 2,
@@ -82,7 +82,7 @@
   } ]
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
@@ -93,7 +93,80 @@
   "output" : 9
 }, {
   "command" : "getPlayerTurn",
-  "playerIdx" : 2
+  "output" : 2
+}, {
+  "command" : "getCardsOnTable",
+  "output" : [ [ ], [ {
+    "health" : 5,
+    "attackDamage" : 2,
+    "name" : "Warden",
+    "description" : "Premium card: You shall not pass, you shall not prevail, you shall perish.",
+    "mana" : 2,
+    "colors" : [ "Brown", "Blue" ]
+  }, {
+    "health" : 7,
+    "attackDamage" : 1,
+    "name" : "Goliath",
+    "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
+    "mana" : 4,
+    "colors" : [ "Red", "Purple" ]
+  }, {
+    "health" : 8,
+    "attackDamage" : 1,
+    "name" : "Goliath",
+    "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
+    "mana" : 4,
+    "colors" : [ "Brown", "Black", "Grey" ]
+  }, {
+    "health" : 3,
+    "attackDamage" : 4,
+    "name" : "Miraj",
+    "description" : "Standard card: When he is near, close your eyes. They betray your mind.",
+    "mana" : 5,
+    "colors" : [ "Yellow", "Orange", "Red" ]
+  }, {
+    "health" : 7,
+    "attackDamage" : 1,
+    "name" : "Goliath",
+    "description" : "Premium card: No matter how many, his body will fight. Save your breath for the Mountain is strong.",
+    "mana" : 4,
+    "colors" : [ "Brown", "Black", "Grey" ]
+  } ], [ {
+    "health" : 8,
+    "attackDamage" : 1,
+    "name" : "Goliath",
+    "description" : "Standard card: A warrior who is never afraid of battle, no matter the costs",
+    "mana" : 3,
+    "colors" : [ "Brown", "Black", "Grey" ]
+  }, {
+    "health" : 4,
+    "attackDamage" : 5,
+    "name" : "The Ripper",
+    "description" : "Premium card: Ravished by the winds of hell, no soul is to be forgiven.",
+    "mana" : 4,
+    "colors" : [ "Orange", "Red", "Black" ]
+  }, {
+    "health" : 7,
+    "attackDamage" : 2,
+    "name" : "Goliath",
+    "description" : "Premium card: No matter how many, his body will fight. Save your breath for the Mountain is strong.",
+    "mana" : 4,
+    "colors" : [ "Red", "Purple" ]
+  }, {
+    "health" : 7,
+    "attackDamage" : 1,
+    "name" : "Goliath",
+    "description" : "Premium card: No matter how many, his body will fight. Save your breath for the Mountain is strong.",
+    "mana" : 4,
+    "colors" : [ "Red", "Purple" ]
+  }, {
+    "health" : 4,
+    "attackDamage" : 4,
+    "name" : "Miraj",
+    "description" : "Standard card: When he is near, close your eyes. They betray your mind.",
+    "mana" : 4,
+    "colors" : [ "Red", "Black" ]
+  } ], [ ] ]
 }, {
   "command" : "getCardsInHand",
   "playerIdx" : 2,

@@ -1,5 +1,7 @@
 package game.datacollections;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.ArrayList;
 
 public class CardData {

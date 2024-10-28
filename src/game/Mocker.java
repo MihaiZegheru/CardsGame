@@ -13,13 +13,12 @@ public class Mocker {
     // TODO: Return a game-end object.
     // Mock a game for the given input. This function sets up all the game variables so that it keeps the game logic
     // separate, calling its API.
-    public ArrayNode Mock(Input descriptor) {
+    public ArrayNode Mock(Input descriptor, ObjectMapper objectMapper) {
         if (descriptor == null) {
             System.out.println("Input Descriptor not loaded.");
             System.exit(-1);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.createArrayNode();
 
         PlayerData playerOneData = BuildPlayerData(descriptor.getPlayerOneDecks(), "playerOne");
@@ -38,7 +37,7 @@ public class Mocker {
                     startGameState.getStartingPlayer(), startGameState.getShuffleSeed());
 
             for (ActionsInput action : gameInput.getActions()) {
-                Optional<ObjectNode> node = ActionManager.GetInstance().HandleAction(action);
+                Optional<ObjectNode> node = ActionManager.GetInstance().HandleAction(action, objectMapper);
                 if (node.isEmpty()) {
                     continue;
                 }
