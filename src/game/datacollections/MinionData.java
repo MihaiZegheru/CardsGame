@@ -15,7 +15,7 @@ public class MinionData extends CardData {
 
     @Override
     public String toString() {
-        return "MinionData{"
+        return "{"
                 +  "mana="
                 + mana
                 +  ", attackDamage="

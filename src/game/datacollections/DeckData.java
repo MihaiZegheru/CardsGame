@@ -13,7 +13,7 @@ public class DeckData {
 
     @Override
     public String toString() {
-        return "DeckData{"
+        return "{"
                 + ", cards="
                 + cards
                 + '}';

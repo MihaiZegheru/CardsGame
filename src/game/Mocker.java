@@ -1,5 +1,7 @@
 package game;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.*;
 import game.datacollections.*;
 
@@ -9,11 +11,14 @@ public class Mocker {
     // TODO: Return a game-end object.
     // Mock a game for the given input. This function sets up all the game variables so that it keeps the game logic
     // separate, calling its API.
-    public void Mock(Input descriptor) {
+    public ArrayNode Mock(Input descriptor) {
         if (descriptor == null) {
             System.out.println("Input Descriptor not loaded.");
             System.exit(-1);
         }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.createArrayNode();
 
         PlayerData playerOneData = BuildPlayerData(descriptor.getPlayerOneDecks(), "playerOne");
         PlayerData playerTwoData = BuildPlayerData(descriptor.getPlayerTwoDecks(), "playerTwo");
@@ -23,17 +28,24 @@ public class Mocker {
 
             playerOneData.setHero(BuildHeroData(startGameState.getPlayerOneHero()));
             DeckData playerOneDeck = playerOneData.getDecks().get(startGameState.getPlayerOneDeckIdx());
-            Player playerOne = new Player(playerOneDeck, playerOneData.getHero());
+            Player playerOne = new Player(playerOneData, playerOneDeck);
 
             playerTwoData.setHero(BuildHeroData(startGameState.getPlayerTwoHero()));
             DeckData playerTwoDeck = playerTwoData.getDecks().get(startGameState.getPlayerTwoDeckIdx());
-            Player playerTwo = new Player(playerTwoDeck, playerTwoData.getHero());
+            Player playerTwo = new Player(playerTwoData, playerTwoDeck);
 
-            GameManager.GetInstance().StartGame(playerOne, playerTwo);
+            GameManager.GetInstance().StartGame(playerOne, playerTwo, startGameState.getStartingPlayer(),
+                    startGameState.getShuffleSeed());
+
+            for (ActionsInput action : gameInput.getActions()) {
+                arrayNode.add(ActionManager.GetInstance().HandleAction(action));
+            }
         }
 
         // Set null after every mock.
         descriptor = null;
+
+        return arrayNode;
     }
 
     private ArrayList<DeckData> BuildDecksDataFromInputObject(DecksInput input) {
@@ -56,8 +68,8 @@ public class Mocker {
     }
 
     private HeroData BuildHeroData(CardInput heroDescriptor) {
-        return new HeroData(heroDescriptor.getMana(), heroDescriptor.getHealth(), heroDescriptor.getDescription(),
-                heroDescriptor.getColors(), heroDescriptor.getName());
+        return new HeroData(heroDescriptor.getMana(), heroDescriptor.getDescription(), heroDescriptor.getColors(),
+                heroDescriptor.getName());
     }
 
 }
