@@ -45,7 +45,14 @@
     "description" : "Premium card: Fear him. Your last breath is now.",
     "mana" : 1,
     "colors" : [ "Red", "Blue", "Pink" ]
-  } ], [ ], [ {
+  } ], [ {
+    "health" : 0,
+    "attackDamage" : 8,
+    "name" : "Warden",
+    "description" : "Standard card: He has seen everything, his mind has never been asleep since the making of the realm.",
+    "mana" : 2,
+    "colors" : [ "Brown", "Blue" ]
+  } ], [ {
     "health" : 8,
     "attackDamage" : 4,
     "name" : "Goliath",

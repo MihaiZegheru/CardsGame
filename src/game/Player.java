@@ -2,7 +2,9 @@ package game;
 
 import fileio.Coordinates;
 import game.datacollections.*;
-import utility.Status;
+import status.Status;
+import status.StatusCode;
+import status.StatusOr;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -19,12 +21,11 @@ public class Player {
     private ArrayList<Minion> boardCards;
     private Hero hero;
 
-    private int ddRow;
-    private int tankRow;
+    private Army army;
 
     private int currMana;
 
-    public Player(PlayerData data, DeckData deckData, int ddRow, int tankRow, int id) {
+    public Player(PlayerData data, DeckData deckData, int id) {
         this.data = data;
         this.deckCards = new LinkedList<>();
         this.deckCards.addAll(deckData.getCards());
@@ -32,8 +33,7 @@ public class Player {
         this.boardCards = new ArrayList<>();
         this.hero = new Hero(data.getHero());
         this.id = id;
-        this.ddRow = ddRow;
-        this.tankRow = tankRow;
+        this.army = new Army(new Hero(data.getHero()));
     }
 
     public void DrawCard() {
@@ -46,34 +46,31 @@ public class Player {
 
     public Status PlaceCard(int idx) {
         if (idx >= handCards.size()) {
-            return Status.outOfRange();
+            return new Status(StatusCode.kOutOfRange, "Index out of range.");
         }
         if (handCards.get(idx).getMana() > currMana) {
-            return Status.notEnoughManaToPlace();
+            return new Status(StatusCode.kAborted, "Not enough mana to place card on table.");
         }
-        Minion placedMinion = GameManager.GetInstance().getGame().PlaceCard(this, handCards.get(idx));
-        if (placedMinion == null) {
-            return Status.aborted();
+
+        Status placeStatus = army.PlaceMinion(handCards.get(idx));
+        if (!placeStatus.isOk()) {
+            return placeStatus;
         }
         currMana -= handCards.get(idx).getMana();
-        boardCards.add(placedMinion);
         handCards.remove(idx);
         return Status.ok();
     }
 
-    public Status UseMinionAttack(Coordinates atkrCoords, Coordinates atkdCoords) {
-        if (!OwnsCoords(atkrCoords)) {
-            return Status.aborted();
+    public Status UseMinionAttack(Coordinates attackerCoords, Coordinates defenderCoords) {
+        StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
+        if (!minion.isOk()) {
+            return minion;
         }
-        return GameManager.GetInstance().getGame().AttackFromAt(this, atkrCoords, atkdCoords);
+        return GameManager.GetInstance().getGame().AttackAt(this, minion.getBody(), defenderCoords);
     }
 
     public void EndTurn() {
         GameManager.GetInstance().getGame().OnEndPlayerTurn(this);
-    }
-
-    public boolean OwnsCoords(Coordinates coords) {
-        return coords.getX() == tankRow || coords.getX() == ddRow;
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }
@@ -81,8 +78,7 @@ public class Player {
     public HeroData getHeroData() { return data.getHero(); }
     public int getCurrMana() { return currMana; }
     public int getId() { return id; }
-    public int getDdRow() {return ddRow; }
-    public int getTankRow() { return tankRow; }
+    public Army getArmy() { return army; }
 
     @Override
     public String toString() {

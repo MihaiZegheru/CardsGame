@@ -34,6 +34,17 @@
   "playerIdx" : 2,
   "output" : 7
 }, {
+  "command" : "cardUsesAttack",
+  "cardAttacker" : {
+    "x" : 2,
+    "y" : 3
+  },
+  "cardAttacked" : {
+    "x" : 0,
+    "y" : 1
+  },
+  "error" : "Attacked card is not of type 'Tank’."
+}, {
   "command" : "getCardsOnTable",
   "output" : [ [ {
     "health" : 2,
@@ -42,6 +53,20 @@
     "description" : "Standard card: A drink can always be served, with the blood of his enemies.",
     "mana" : 2,
     "colors" : [ "Red", "Blue", "Pink" ]
+  }, {
+    "health" : 2,
+    "attackDamage" : 2,
+    "name" : "Sentinel",
+    "description" : "Standard card: Trained by the best, nothing will catch him off-guard.",
+    "mana" : 1,
+    "colors" : [ "Black", "Grey", "Blue" ]
+  }, {
+    "health" : 0,
+    "attackDamage" : 0,
+    "name" : "Disciple",
+    "description" : "Premium card: The will of Gods has been spoken, obey and you shall be saved...or not.",
+    "mana" : 2,
+    "colors" : [ "Green", "Yellow", "Blue" ]
   } ], [ {
     "health" : 4,
     "attackDamage" : 5,
@@ -57,7 +82,7 @@
     "mana" : 3,
     "colors" : [ "Orange", "Red", "Black" ]
   }, {
-    "health" : 2,
+    "health" : 4,
     "attackDamage" : 2,
     "name" : "Warden",
     "description" : "Premium card: You shall not pass, you shall not prevail, you shall perish.",

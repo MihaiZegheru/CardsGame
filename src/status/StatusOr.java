@@ -1,16 +1,24 @@
-package utility;
+package status;
 
 public class StatusOr<T> extends Status {
 
     private final T body;
 
-    protected StatusOr(StatusCode statusCode) {
-        super(statusCode);
+    public StatusOr(Status status) {
+        this(status.statusCode, "");
+    }
+
+    public StatusOr(StatusCode statusCode) {
+        this(statusCode, "");
+    }
+
+    public StatusOr(StatusCode statusCode, String message) {
+        super(statusCode, message);
         this.body = null;
     }
 
-    protected StatusOr(T body) {
-        super(StatusCode.kNone);
+    public StatusOr(T body) {
+        super(StatusCode.kOk, null);
         this.body = body;
     }
 

@@ -3,7 +3,9 @@ package game;
 
 import fileio.Coordinates;
 import game.datacollections.MinionData;
-import utility.Status;
+import status.Status;
+import status.StatusCode;
+import status.StatusOr;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +55,7 @@ public class Game {
         }
 
         // TODO: Unfreeze cards of caller
+        // TODO: Reset card activation
 
         playerAtTurnId = getNextTurnPlayer();
         if (playerAtTurnId == startingPlayerId) {
@@ -69,41 +72,24 @@ public class Game {
         playerTwo.IncreaseCurrMana(manaRate);
     }
 
-    public Status AttackFromAt(Player attacker, Coordinates atkrCoords, Coordinates atkdCoords) {
-        // TODO: Add tank as frontline. This should be refactored such that the player owns these cards and this stays
-        // the middle man
-        Player attacked;
+    public Status AttackAt(Player attacker, Minion minion, Coordinates defenderCoords) {
+        Player defender;
         if (attacker == playerOne) {
-            attacked = playerTwo;
+            defender = playerTwo;
         } else {
-            attacked = playerOne;
+            defender = playerOne;
         }
 
-        if (!attacker.OwnsCoords(atkrCoords)) {
-            return Status.notOwnAttackerCard();
-        }
-        if (!attacked.OwnsCoords(atkdCoords)) {
-            return Status.ownsAttackedCard();
+        StatusOr<Minion> defenderMinionStatus = defender.getArmy().getMinionAt(defenderCoords);
+        if (!defenderMinionStatus.isOk()) {
+            return defenderMinionStatus;
         }
 
-        System.out.println(board);
-        Minion attackerCard = GetCardAtCoords(atkrCoords);
-        if (attackerCard == null) {
-            return Status.aborted();
+        Minion defenderMinion = defenderMinionStatus.getBody();
+        if (defender.getArmy().hasTanks() && !defenderMinion.isTank()) {
+            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
         }
-        if (attackerCard.getHasAttacked()) {
-            return Status.cardHasAttacked();
-        }
-        if (attackerCard.getIsFrozen()) {
-            return Status.cardIsFrozen();
-        }
-
-        Minion attackedCard = GetCardAtCoords(atkdCoords);
-        if (attackedCard == null) {
-            return Status.aborted();
-        }
-
-        attackedCard.OnAttacked(attackerCard.getAttackDamage());
+        minion.Attack(defenderMinion);
         return Status.ok();
     }
 
@@ -115,55 +101,16 @@ public class Game {
         }
     }
 
-    public Minion PlaceCard(Player player, MinionData card) {
-        if (player.getId() != playerAtTurnId) {
-            System.out.println("Player not at turn to end round.");
-            return null;
-        }
-
-        Minion minion =  new Minion(card);
-        switch (ResolveCardType(card)) {
-            case DAMAGE_DEALER:
-                PlaceMinion(player.getDdRow(), board.get(player.getDdRow()).size(), minion);
-                break;
-            case TANK:
-                PlaceMinion(player.getTankRow(), board.get(player.getTankRow()).size(), minion);
-                break;
-        }
-
-        return minion;
-    }
-
-    private void PlaceMinion(int row, int col, Minion card) {
-        if (col >= MAX_COLUMNS) {
-            System.out.println("Row already full.");
-            return;
-        }
-        board.get(row).add(card);
-    }
-
-    private Minion GetCardAtCoords(Coordinates coords) {
-        if (board.size() <= coords.getX() || board.get(coords.getX()).size() <= coords.getY()) {
-            return null;
-        }
-        return board.get(coords.getX()).get(coords.getY());
-    }
-
     public int getPlayerAtTurnId() { return playerAtTurnId; }
 
     private int getNextTurnPlayer() { return playerAtTurnId % 2 + 1; }
 
-    public ArrayList<ArrayList<Minion>> getBoard() { return board; }
-
-
-    private CardType ResolveCardType(MinionData card) {
-        return switch (card.getName()) {
-            case "Sentinel", "Berserker", "The Cursed One", "Disciple" -> CardType.DAMAGE_DEALER;
-            case "Goliath", "Warden", "The Ripper", "Miraj" -> CardType.TANK;
-            default -> {
-                System.out.println("Card " + card + " implementation does not exist.");
-                yield CardType.DEFAULT;
-            }
-        };
+    public ArrayList<ArrayList<Minion>> getBoard() {
+        ArrayList<ArrayList<Minion>> board = new ArrayList<>();
+        board.add(playerTwo.getArmy().getDdLane());
+        board.add(playerTwo.getArmy().getTankLane());
+        board.add(playerOne.getArmy().getTankLane());
+        board.add(playerOne.getArmy().getDdLane());
+        return board;
     }
 }
