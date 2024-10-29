@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Status {
 
     enum StatusCode {
+        kNone(""),
         kOk("Ok."),
         kAborted("Aborted."),
         kUnknown("Unknown."),
@@ -24,49 +25,49 @@ public class Status {
         public String getMessage() { return message; }
     }
 
-    private final StatusCode statusCode;
+    protected final StatusCode statusCode;
 
     public boolean isOk() {
         return statusCode == StatusCode.kOk;
     }
 
     public static Status ok() {
-        return new Status(StatusCode.kOk);
+        return new StatusOr<>(StatusCode.kOk);
     }
 
     public static Status aborted() {
-        return new Status(StatusCode.kAborted);
+        return new StatusOr<>(StatusCode.kAborted);
     }
 
     public static Status outOfRange() {
-        return new Status(StatusCode.kOutOfRange);
+        return new StatusOr<>(StatusCode.kOutOfRange);
     }
 
     public static Status notEnoughManaToPlace() {
-        return new Status(StatusCode.kNotEnoughManaToPlace);
+        return new StatusOr<>(StatusCode.kNotEnoughManaToPlace);
     }
 
     public static Status ownsAttackedCard() {
-        return new Status(StatusCode.kOwnsAttackedCard);
+        return new StatusOr<>(StatusCode.kOwnsAttackedCard);
     }
 
     public static Status notOwnAttackerCard() {
-        return new Status(StatusCode.kNotOwnAttackerCard);
+        return new StatusOr<>(StatusCode.kNotOwnAttackerCard);
     }
 
     public static Status cardIsFrozen() {
-        return new Status(StatusCode.kCardIsFrozen);
+        return new StatusOr<>(StatusCode.kCardIsFrozen);
     }
 
     public static Status cardHasAttacked() {
-        return new Status(StatusCode.kCardHasAttacked);
+        return new StatusOr<>(StatusCode.kCardHasAttacked);
     }
 
     public static Status cardNotFoundAtLocation() {
-        return new Status(StatusCode.kCardNotFoundAtLocation);
+        return new StatusOr<>(StatusCode.kCardNotFoundAtLocation);
     }
 
-    private Status(StatusCode statusCode) {
+    protected Status(StatusCode statusCode) {
         this.statusCode = statusCode;
     }
 
