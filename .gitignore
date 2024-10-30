@@ -24,6 +24,8 @@ hs_err_pid*
 replay_pid*
 
 # Project
-result/
-out/
+result/*
+ref/*
+out/*
 checkstyle.txt
+tema.iml
