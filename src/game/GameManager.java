@@ -107,6 +107,25 @@ public class GameManager {
                 globalCoordsToPlayerSpace(defenderCoords));
     }
 
+    public Status useMinionAbility(Coordinates attackerCoords, Coordinates defenderCoords) {
+        if (activePlayerId == 1 && ((attackerCoords.getX() != 2 && attackerCoords.getX() != 3) ||
+                attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
+        } else if (activePlayerId == 2 && ((attackerCoords.getX() != 0 && attackerCoords.getX() != 1) ||
+                attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
+        }
+//        if (activePlayerId == 1 && ((defenderCoords.getX() != 0 && defenderCoords.getX() != 1) ||
+//                defenderCoords.getY() >= cardsPerRow)) {
+//            return new Status(StatusCode.kOutOfRange, "Provided defender coordinates exceed player's limit.");
+//        } else if (activePlayerId == 2 && ((defenderCoords.getX() != 2 && defenderCoords.getX() != 3) ||
+//                defenderCoords.getY() >= cardsPerRow)) {
+//            return new Status(StatusCode.kOutOfRange, "Provided defender coordinates exceed player's limit.");
+//        }
+        return getActivePlayer().UseMinionAttack(globalCoordsToPlayerSpace(attackerCoords),
+                globalCoordsToPlayerSpace(defenderCoords));
+    }
+
     public StatusOr<Minion> GetCardAt(Coordinates coords) {
         if (coords.getX() == 0 || coords.getX() == 1) {
             return playerTwo.getArmy().getMinionAt(globalCoordsToPlayerSpace(coords));
@@ -132,6 +151,10 @@ public class GameManager {
             newCoords.setX(1);
         }
         return newCoords;
+    }
+
+    Player getOtherPlayer(Player self) {
+        return self == playerOne ? playerTwo : playerOne;
     }
 
     public int getActivePlayerId() { return activePlayerId; }

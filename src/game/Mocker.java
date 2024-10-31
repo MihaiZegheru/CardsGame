@@ -54,9 +54,17 @@ public class Mocker {
             ArrayList<MinionData> minionsData = new ArrayList<>(input.getNrCardsInDeck());
             for (int j = 0; j < input.getNrCardsInDeck(); ++j) {
                 CardInput currCardInput = input.getDecks().get(i).get(j);
-                minionsData.add(new MinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),
-                        currCardInput.getHealth(), currCardInput.getDescription(), currCardInput.getColors(),
-                        currCardInput.getName()));
+                if (WarriorType.ResolveWarriorType(currCardInput.getName()).is(WarriorType.kCaster)) {
+                    // TODO: Add abilities
+                    Ability dummyAbility = (a) -> { return null; };
+                    minionsData.add(new CasterMinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),
+                            currCardInput.getHealth(), dummyAbility, currCardInput.getDescription(),
+                            currCardInput.getColors(), currCardInput.getName()));
+                } else {
+                    minionsData.add(new MinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),
+                            currCardInput.getHealth(), currCardInput.getDescription(), currCardInput.getColors(),
+                            currCardInput.getName()));
+                }
             }
             decksData.add(new DeckData(minionsData));
         }
@@ -71,5 +79,4 @@ public class Mocker {
         return new HeroData(heroDescriptor.getMana(), heroDescriptor.getDescription(), heroDescriptor.getColors(),
                 heroDescriptor.getName());
     }
-
 }

@@ -33,7 +33,9 @@ public class Army extends GameObject {
         if (lane.size() >= GameManager.GetInstance().getCardsPerRow()) {
             return new Status(StatusCode.kOutOfRange, "Minion exceeds card limit on associated row.");
         }
-        lane.add(new Minion(minionData, this));
+        Minion minion = new Minion(minionData, this);
+        minion.setParent(this);
+        lane.add(minion);
         return Status.ok();
     }
 

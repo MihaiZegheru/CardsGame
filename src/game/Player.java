@@ -37,6 +37,7 @@ public class Player extends GameObject {
 //        this.hero = new Hero(data.getHero(), army);
         this.id = id;
         this.army = new Army(new Hero(data.getHero(), army));
+        this.army.setParent(this);
         army.setParent(this);
     }
 
@@ -76,15 +77,22 @@ public class Player extends GameObject {
     }
 
     public Status UseMinionAttack(Coordinates attackerCoords, Coordinates defenderCoords) {
-        System.out.println("AAAAAAAAA");
-        // TODO: Attack is different from ability. Cannot reuse logic. This is what causes bug.
-        // Attack doesn't care about supports.
-        System.out.println(defenderCoords.getIsEnemyPosition());
         StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
         if (!minion.isOk()) {
             return minion;
         }
         return GameManager.GetInstance().getGame().AttackAt(this, minion.unwrap(), defenderCoords);
+    }
+
+    public Status useMinionAbility(Coordinates casterCoords, Coordinates targetCoords) {
+        StatusOr<Minion> minionStatus = army.getMinionAt(casterCoords);
+        if (!minionStatus.isOk()) {
+            return minionStatus;
+        }
+        if (!minionStatus.unwrap().getData().getType().is(WarriorType.kCaster)) {
+            return new StatusOr<>(StatusCode.kAborted, "Selected minion is not a caster.");
+        }
+        return GameManager.GetInstance().getGame().CastAt(this, minionStatus.unwrap(), targetCoords);
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }

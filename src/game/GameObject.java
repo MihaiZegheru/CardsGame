@@ -13,6 +13,10 @@ public abstract class GameObject {
     abstract void BeginPlay();
     abstract void TickRound();
 
+    <T> T getAs() {
+        return (T)this;
+    }
+
     GameObject getParent() { return parent; }
     void setParent(GameObject object) { parent = object; }
 }

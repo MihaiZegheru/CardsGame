@@ -2,12 +2,13 @@ package game;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import game.datacollections.CardData;
+import status.Status;
 
 import java.util.ArrayList;
 
 import static utility.Math.Clamp;
 
-public class Warrior extends GameObject {
+public abstract class Warrior extends GameObject {
     protected CardData data;
     protected int health;
     protected boolean hasAttacked;

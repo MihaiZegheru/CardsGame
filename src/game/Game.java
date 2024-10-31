@@ -23,21 +23,11 @@ public class Game extends GameObject{
     void TickRound() {}
 
     public Status AttackAt(Player attacker, Minion minion, Coordinates defenderCoords) {
-        System.out.println(minion.getData().getName());
-        if (minion.getData().getType().is(WarriorType.kAttacker) != defenderCoords.getIsEnemyPosition()) {
-            System.out.println("GOT YOU");
-            return new Status(StatusCode.kAborted, defenderCoords.getIsEnemyPosition()
-                    ? "Attacked card does not belong to the enemy."
-                    : "Attacked card does not belong to the current player.");
+        if (!defenderCoords.getIsEnemyPosition()) {
+            return new Status(StatusCode.kAborted, "Attacked card does not belong to the enemy.");
         }
 
-        Player defender;
-        if (attacker == playerOne) {
-            defender = playerTwo;
-        } else {
-            defender = playerOne;
-        }
-
+        Player defender = GameManager.GetInstance().getOtherPlayer(attacker);
         StatusOr<Minion> defenderMinionStatus = defender.getArmy().getMinionAt(defenderCoords);
         if (!defenderMinionStatus.isOk()) {
             return defenderMinionStatus;
@@ -48,6 +38,28 @@ public class Game extends GameObject{
             return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
         }
         return minion.Attack(defenderMinion);
+    }
+
+    public Status CastAt(Player caster, Minion minion, Coordinates targetCoords) {
+        if (minion.getData().getType().is(WarriorType.kAttacker) != targetCoords.getIsEnemyPosition()) {
+            return new Status(StatusCode.kAborted, targetCoords.getIsEnemyPosition()
+                    ? "Attacked card does not belong to the enemy."
+                    : "Attacked card does not belong to the current player.");
+        }
+
+        Player target = targetCoords.getIsEnemyPosition()
+                ? GameManager.GetInstance().getOtherPlayer(caster)
+                : caster;
+        StatusOr<Minion> targetMinionStatus = target.getArmy().getMinionAt(targetCoords);
+        if (!targetMinionStatus.isOk()) {
+            return targetMinionStatus;
+        }
+
+        Minion targetMinion = targetMinionStatus.unwrap();
+        if (targetCoords.getIsEnemyPosition() && target.getArmy().hasTanks() && !targetMinion.isTank()) {
+            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
+        }
+        return minion.<CasterMinion>getAs().cast(targetMinion);
     }
 
     public ArrayList<ArrayList<Minion>> getBoard() {
