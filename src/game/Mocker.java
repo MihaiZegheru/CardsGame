@@ -13,7 +13,7 @@ public class Mocker {
     // TODO: Return a game-end object.
     // Mock a game for the given input. This function sets up all the game variables so that it keeps the game logic
     // separate, calling its API.
-    public ArrayNode Mock(Input descriptor, ObjectMapper objectMapper) {
+    public static ArrayNode Mock(Input descriptor, ObjectMapper objectMapper) {
         if (descriptor == null) {
             System.out.println("Input Descriptor not loaded.");
             System.exit(-1);
@@ -33,11 +33,11 @@ public class Mocker {
             playerTwoData.setHero(BuildHeroData(startGameState.getPlayerTwoHero()));
             int playerTwoDeckIdx = startGameState.getPlayerTwoDeckIdx();
 
-            GameManager.GetInstance().StartGame(playerOneData, playerOneDeckIdx, playerTwoData, playerTwoDeckIdx,
+            GameManager.GetInstance().Start(playerOneData, playerOneDeckIdx, playerTwoData, playerTwoDeckIdx,
                     startGameState.getStartingPlayer(), startGameState.getShuffleSeed());
 
             for (ActionsInput action : gameInput.getActions()) {
-                Optional<ObjectNode> node = ActionManager.GetInstance().HandleAction(action, objectMapper);
+                Optional<ObjectNode> node = ActionManager.HandleAction(action, objectMapper);
                 if (node.isEmpty()) {
                     continue;
                 }
@@ -45,13 +45,10 @@ public class Mocker {
             }
         }
 
-        // Set null after every mock.
-        descriptor = null;
-
         return arrayNode;
     }
 
-    private ArrayList<DeckData> BuildDecksDataFromInputObject(DecksInput input) {
+    private static ArrayList<DeckData> BuildDecksDataFromInputObject(DecksInput input) {
         ArrayList<DeckData> decksData = new ArrayList<>(input.getNrDecks());
         for (int i = 0; i < input.getNrDecks(); ++i) {
             ArrayList<MinionData> minionsData = new ArrayList<>(input.getNrCardsInDeck());
@@ -66,11 +63,11 @@ public class Mocker {
         return decksData;
     }
 
-    private PlayerData BuildPlayerData(DecksInput decksDescriptor, String name) {
+    private static PlayerData BuildPlayerData(DecksInput decksDescriptor, String name) {
         return new PlayerData(BuildDecksDataFromInputObject(decksDescriptor), name);
     }
 
-    private HeroData BuildHeroData(CardInput heroDescriptor) {
+    private static HeroData BuildHeroData(CardInput heroDescriptor) {
         return new HeroData(heroDescriptor.getMana(), heroDescriptor.getDescription(), heroDescriptor.getColors(),
                 heroDescriptor.getName());
     }

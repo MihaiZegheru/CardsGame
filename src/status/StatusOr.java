@@ -5,7 +5,7 @@ public class StatusOr<T> extends Status {
     private final T body;
 
     public StatusOr(Status status) {
-        this(status.statusCode, "");
+        this(status.statusCode, status.message);
     }
 
     public StatusOr(StatusCode statusCode) {
@@ -26,5 +26,5 @@ public class StatusOr<T> extends Status {
         return body != null;
     }
 
-    public T getBody() { return body; }
+    public T unwrap() { return body; }
 }

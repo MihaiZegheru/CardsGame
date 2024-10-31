@@ -5,15 +5,15 @@ import game.datacollections.MinionData;
 import status.Status;
 import status.StatusCode;
 
-public class Minion extends Card {
+public class Minion extends Warrior {
     protected int attackDamage;
 
-    public Minion(MinionData data) {
-        super(data);
+    public Minion(MinionData data, Army army) {
+        super(data, army);
         this.attackDamage = data.getAttackDamage();
     }
 
-    public Status Attack(Minion minion) {
+    Status Attack(Minion minion) {
         if (getHasAttacked()) {
             return new Status(StatusCode.kAborted, "Attacker card has already attacked this turn.");
         }
@@ -27,12 +27,12 @@ public class Minion extends Card {
 
     public int getAttackDamage() { return attackDamage; }
     @JsonIgnore
-    public boolean isTank() { return ((MinionData)data).getType() == MinionType.kTank; }
+    public boolean isTank() { return ((MinionData)data).getType().is(WarriorType.kTank); }
     @JsonIgnore
-    public boolean isDd() { return ((MinionData)data).getType() == MinionType.kDamageDealer; }
+    public boolean isDd() { return ((MinionData)data).getType().is(WarriorType.kDamageDealer); }
 
     @Override
     protected void OnDied() {
-        GameManager.GetInstance().getGame().OnMinionDeath(this);
+        army.OnMinionDied(this);
     }
 }

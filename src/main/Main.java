@@ -69,8 +69,7 @@ public final class Main {
         Input inputData = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH + filePath1),
                 Input.class);
 
-        Mocker mocker = new Mocker();
-        ArrayNode output = mocker.Mock(inputData, objectMapper);
+        ArrayNode output = Mocker.Mock(inputData, objectMapper);
 
         /*
          * TODO Implement your function here

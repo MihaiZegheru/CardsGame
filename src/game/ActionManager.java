@@ -4,25 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
+import fileio.Coordinates;
 import status.Status;
+import status.StatusOr;
 
 import java.util.Optional;
 
-public class ActionManager {
-    private static ActionManager instance = null;
-    public static ActionManager GetInstance() {
-        if (instance == null) {
-            instance = new ActionManager();
-        }
-        return instance;
-    }
+import static java.lang.System.exit;
 
-    public Optional<ObjectNode> HandleAction(ActionsInput action, ObjectMapper objectMapper) {
+public class ActionManager {
+
+    public static Optional<ObjectNode> HandleAction(ActionsInput action, ObjectMapper objectMapper) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", action.getCommand());
 
         return switch (action.getCommand()) {
+            case "cardUsesAbility" -> Optional.ofNullable(CardUsesAbility(action, objectNode));
             case "cardUsesAttack" -> Optional.ofNullable(CardUsesAttack(action, objectNode));
+            case "getCardAtPosition" -> Optional.of(GetCardAtPosition(action, objectNode));
             case "getCardsInHand" -> Optional.of(GetCardsInHand(action, objectNode));
             case "getCardsOnTable" -> Optional.of(GetCardsOnTable(action, objectNode));
             case "getPlayerDeck" -> Optional.of(GetPlayerDeck(action, objectNode));
@@ -41,52 +40,64 @@ public class ActionManager {
         };
     }
 
-    private ObjectNode GetPlayerDeck(ActionsInput action, ObjectNode objectNode) {
-        Player player = GameManager.GetInstance().getPlayer(action.getPlayerIdx());
+    private static ObjectNode GetPlayerDeck(ActionsInput action, ObjectNode objectNode) {
+        StatusOr<Player> player = GameManager.GetInstance().getPlayerById(action.getPlayerIdx());
+        if (!player.hasBody()) {
+            exit(-1);
+        }
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
-        ArrayNode arrayNode = objectMapper.valueToTree(player.getDeckCardsData());
+        ArrayNode arrayNode = objectMapper.valueToTree(player.unwrap().getDeckCardsData());
         objectNode.put("output", arrayNode);
         return objectNode;
     }
 
-    private ObjectNode GetPlayerHero(ActionsInput action, ObjectNode objectNode) {
-        Player player = GameManager.GetInstance().getPlayer(action.getPlayerIdx());
+    private static ObjectNode GetPlayerHero(ActionsInput action, ObjectNode objectNode) {
+        StatusOr<Player> player = GameManager.GetInstance().getPlayerById(action.getPlayerIdx());
+        if (!player.hasBody()) {
+            exit(-1);
+        }
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
-        objectNode.put("output", objectMapper.valueToTree(player.getHeroData()));
+        objectNode.put("output", objectMapper.valueToTree(player.unwrap().getHeroData()));
         return objectNode;
     }
 
-    private ObjectNode GetPlayerTurn(ObjectNode objectNode) {
-        objectNode.put("output", GameManager.GetInstance().getPlayerAtTurnId());
+    private static ObjectNode GetPlayerTurn(ObjectNode objectNode) {
+        objectNode.put("output", GameManager.GetInstance().getActivePlayerId());
         return objectNode;
     }
 
-    private ObjectNode GetCardsInHand(ActionsInput action, ObjectNode objectNode) {
-        Player player = GameManager.GetInstance().getPlayer(action.getPlayerIdx());
+    private static ObjectNode GetCardsInHand(ActionsInput action, ObjectNode objectNode) {
+        StatusOr<Player> player = GameManager.GetInstance().getPlayerById(action.getPlayerIdx());
+        if (!player.hasBody()) {
+            exit(-1);
+        }
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
-        objectNode.put("output", objectMapper.valueToTree(player.getCardsInHand()));
+        objectNode.put("output", objectMapper.valueToTree(player.unwrap().getCardsInHand()));
         return objectNode;
     }
 
-    private ObjectNode GetPlayerMana(ActionsInput action, ObjectNode objectNode) {
-        Player player = GameManager.GetInstance().getPlayer(action.getPlayerIdx());
+    private static ObjectNode GetPlayerMana(ActionsInput action, ObjectNode objectNode) {
+        StatusOr<Player> player = GameManager.GetInstance().getPlayerById(action.getPlayerIdx());
+        if (!player.hasBody()) {
+            exit(-1);
+        }
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
-        objectNode.put("output", player.getCurrMana());
+        objectNode.put("output", player.unwrap().getCurrMana());
         return objectNode;
     }
 
-    private ObjectNode GetCardsOnTable(ActionsInput action, ObjectNode objectNode) {
+    private static ObjectNode GetCardsOnTable(ActionsInput action, ObjectNode objectNode) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.valueToTree(GameManager.GetInstance().getGame().getBoard());
         objectNode.put("output", arrayNode);
         return objectNode;
     }
 
-    private ObjectNode PlaceCard(ActionsInput action, ObjectNode objectNode) {
+    private static ObjectNode PlaceCard(ActionsInput action, ObjectNode objectNode) {
         Status response = GameManager.GetInstance().PlaceCard(action.getHandIdx());
         if (response.isOk()) {
             return null;
@@ -96,7 +107,32 @@ public class ActionManager {
         return objectNode;
     }
 
-    private ObjectNode CardUsesAttack(ActionsInput action, ObjectNode objectNode) {
+    private static ObjectNode CardUsesAttack(ActionsInput action, ObjectNode objectNode) {
+        Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
+        if (response.isOk()) {
+            return null;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectNode.put("cardAttacker", objectMapper.valueToTree(action.getCardAttacker()));
+        objectNode.put("cardAttacked", objectMapper.valueToTree(action.getCardAttacked()));
+        objectNode.put("error", response.toString());
+        return objectNode;
+    }
+
+    private static ObjectNode GetCardAtPosition(ActionsInput action, ObjectNode objectNode) {
+        StatusOr<Minion> response = GameManager.GetInstance().GetCardAt(new Coordinates(action.getX(), action.getY()));
+        objectNode.put("x", action.getX());
+        objectNode.put("y",  action.getY());
+        if (!response.isOk()) {
+            objectNode.put("output", response.toString());
+        } else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectNode.put("output", objectMapper.valueToTree(response.unwrap()));
+        }
+        return objectNode;
+    }
+
+    private static ObjectNode CardUsesAbility(ActionsInput action, ObjectNode objectNode) {
         Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
         if (response.isOk()) {
             return null;

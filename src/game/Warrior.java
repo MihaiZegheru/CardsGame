@@ -7,14 +7,14 @@ import java.util.ArrayList;
 
 import static utility.Math.Clamp;
 
-public class Entity extends GameObject {
+public class Warrior extends GameObject {
     protected CardData data;
     protected int health;
     protected boolean hasAttacked;
     protected boolean isFrozen;
     protected Army army;
 
-    public Entity(CardData data, Army army) {
+    public Warrior(CardData data, Army army) {
         super();
         this.data = data;
         this.health = data.getHealth();
@@ -50,6 +50,8 @@ public class Entity extends GameObject {
     public boolean getHasAttacked() { return hasAttacked; }
     @JsonIgnore
     public boolean getIsFrozen() { return isFrozen; }
+    @JsonIgnore
+    public CardData getData() { return data; }
 
     public void setHasAttacked(boolean hasAttacked) { this.hasAttacked = hasAttacked; }
     public void setIsFrozen(boolean isFrozen) { this.isFrozen = isFrozen; }

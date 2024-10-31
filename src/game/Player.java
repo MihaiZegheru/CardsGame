@@ -11,8 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import static utility.Math.Clamp;
 
-public class Player {
+
+public class Player extends GameObject {
     private PlayerData data;
     private int id;
 
@@ -23,7 +25,8 @@ public class Player {
 
     private Army army;
 
-    private int currMana;
+    private int manaFlow = 0;
+    private int currMana = 0;
 
     public Player(PlayerData data, DeckData deckData, int id) {
         this.data = data;
@@ -31,17 +34,28 @@ public class Player {
         this.deckCards.addAll(deckData.getCards());
         this.handCards = new ArrayList<>();
         this.boardCards = new ArrayList<>();
-        this.hero = new Hero(data.getHero());
+//        this.hero = new Hero(data.getHero(), army);
         this.id = id;
-        this.army = new Army(new Hero(data.getHero()));
+        this.army = new Army(new Hero(data.getHero(), army));
+        army.setParent(this);
+    }
+
+    @Override
+    void BeginPlay() {}
+
+    @Override
+    void TickRound() {
+        DrawCard();
+        HandleMana();
     }
 
     public void DrawCard() {
         handCards.add(deckCards.poll());
     }
 
-    public void IncreaseCurrMana(int inc) {
-        currMana += inc;
+    public void HandleMana() {
+        manaFlow = Clamp(manaFlow + 1, 0, 10);
+        currMana += manaFlow;
     }
 
     public Status PlaceCard(int idx) {
@@ -62,15 +76,15 @@ public class Player {
     }
 
     public Status UseMinionAttack(Coordinates attackerCoords, Coordinates defenderCoords) {
+        System.out.println("AAAAAAAAA");
+        // TODO: Attack is different from ability. Cannot reuse logic. This is what causes bug.
+        // Attack doesn't care about supports.
+        System.out.println(defenderCoords.getIsEnemyPosition());
         StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
         if (!minion.isOk()) {
             return minion;
         }
-        return GameManager.GetInstance().getGame().AttackAt(this, minion.getBody(), defenderCoords);
-    }
-
-    public void EndTurn() {
-        GameManager.GetInstance().getGame().OnEndPlayerTurn(this);
+        return GameManager.GetInstance().getGame().AttackAt(this, minion.unwrap(), defenderCoords);
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }

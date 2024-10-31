@@ -8,7 +8,7 @@ import status.StatusOr;
 
 import java.util.ArrayList;
 
-public class Army {
+public class Army extends GameObject {
     private ArrayList<Minion> ddLane;
     private ArrayList<Minion> tankLane;
     private Hero hero;
@@ -22,9 +22,9 @@ public class Army {
     // Returns Status for success or failure.
     public Status PlaceMinion(MinionData minionData) {
         ArrayList<Minion> lane;
-        if (minionData.getType() == MinionType.kDamageDealer) {
+        if (minionData.getType().is(WarriorType.kDamageDealer)) {
             lane = ddLane;
-        } else if (minionData.getType() == MinionType.kTank) {
+        } else if (minionData.getType().is(WarriorType.kTank)) {
             lane = tankLane;
         } else {
             return new Status(StatusCode.kUnknown);
@@ -33,8 +33,16 @@ public class Army {
         if (lane.size() >= GameManager.GetInstance().getCardsPerRow()) {
             return new Status(StatusCode.kOutOfRange, "Minion exceeds card limit on associated row.");
         }
-        lane.add(new Minion(minionData));
+        lane.add(new Minion(minionData, this));
         return Status.ok();
+    }
+
+    void OnMinionDied(Minion minion) {
+        if (minion.isDd()) {
+            ddLane.remove(minion);
+        } else if (minion.isTank()) {
+          tankLane.remove(minion);
+        }
     }
 
     // Return the Minion at coords. Coords must be in local space. If Minion not found return Status.
@@ -63,10 +71,20 @@ public class Army {
         if (coords.getX() > 1) {
             return new Status(StatusCode.kOutOfRange, "Coordinated do not belong to you.");
         } else if (coords.getX() == 0 && ddLane.size() <= coords.getY()) {
-            return new Status(StatusCode.kAborted, "You have no Minion there.");
+            return new Status(StatusCode.kAborted, "No card available at that position.");
         } else if (coords.getX() == 1 && tankLane.size() <= coords.getY()) {
-            return new Status(StatusCode.kAborted, "You have no Minion there.");
+            return new Status(StatusCode.kAborted, "No card available at that position.");
         }
         return Status.ok();
+    }
+
+    @Override
+    void BeginPlay() {
+
+    }
+
+    @Override
+    void TickRound() {
+
     }
 }

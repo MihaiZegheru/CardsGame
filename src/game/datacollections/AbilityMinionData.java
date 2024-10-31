@@ -1,4 +1,20 @@
 package game.datacollections;
 
-public class AbilityMinionData {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import game.Ability;
+
+import java.util.ArrayList;
+
+public class AbilityMinionData extends MinionData {
+
+    protected final Ability ability;
+
+    public AbilityMinionData(int mana, int attackDamage, int health, Ability ability, String description,
+                             ArrayList<String> colors, String name) {
+        super(mana, attackDamage, health, description, colors, name);
+        this.ability = ability;
+    }
+
+    @JsonIgnore
+    public Ability getAbility() { return ability; }
 }

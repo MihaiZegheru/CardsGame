@@ -1,14 +1,23 @@
 package fileio;
 
-public final class Vec2 {
-   private int x, y;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-   public Vec2() {
+public final class Coordinates {
+   private int x, y;
+   private boolean isEnemyPosition = false;
+
+   public Coordinates() {
    }
 
-   public Vec2(int x, int y) {
+   public Coordinates(int x, int y) {
       this.x = x;
       this.y = y;
+   }
+
+   public Coordinates(int x, int y, boolean isEnemyPosition) {
+      this.x = x;
+      this.y = y;
+      this.isEnemyPosition = isEnemyPosition;
    }
 
    public int getX() {
@@ -26,6 +35,11 @@ public final class Vec2 {
    public void setY(final int y) {
       this.y = y;
    }
+
+   @JsonIgnore
+   public boolean getIsEnemyPosition() { return isEnemyPosition; }
+
+   public void setIsEnemyPosition(boolean isEnemyPosition) { this.isEnemyPosition = isEnemyPosition; }
 
    @Override
    public String toString() {

@@ -1,6 +1,7 @@
 package game.datacollections;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import game.WarriorType;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public class CardData {
     protected final String description;
     protected final ArrayList<String> colors;
     protected final String name;
+    protected final WarriorType type;
 
     public CardData(int mana, int health, String description, ArrayList<String> colors, String name) {
         this.mana = mana;
@@ -17,6 +19,7 @@ public class CardData {
         this.description = description;
         this.colors = colors;
         this.name = name;
+        this.type = WarriorType.ResolveWarriorType(this);
     }
 
     public int getMana() { return mana; }
@@ -24,6 +27,8 @@ public class CardData {
     public String getDescription() { return description; }
     public ArrayList<String> getColors() { return colors; }
     public String getName() { return name; }
+    @JsonIgnore
+    public WarriorType getType() { return type; }
 
     @Override
     public String toString() {
