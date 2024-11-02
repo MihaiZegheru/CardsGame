@@ -5,5 +5,6 @@ public enum StatusCode {
     kAborted,
     kUnknown,
     kOutOfRange,
+    kEnded,
     ;
 }

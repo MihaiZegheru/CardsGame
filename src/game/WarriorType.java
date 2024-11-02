@@ -18,7 +18,6 @@ public class WarriorType {
     }
 
     public boolean is(int mask) {
-        System.out.println(this.mask + " " + mask);
         return (this.mask & mask) == mask;
     }
 

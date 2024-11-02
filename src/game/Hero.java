@@ -6,4 +6,7 @@ public class Hero extends Warrior {
     public Hero(HeroData data, Army army) {
         super(data, army);
     }
+
+    @Override
+    protected void OnDied() { army.onHeroDied(); }
 }

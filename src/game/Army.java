@@ -13,8 +13,7 @@ public class Army extends GameObject {
     private ArrayList<Minion> tankLane;
     private Hero hero;
 
-    public Army(Hero hero) {
-        this.hero = hero;
+    public Army() {
         ddLane = new ArrayList<>();
         tankLane = new ArrayList<>();
     }
@@ -33,7 +32,7 @@ public class Army extends GameObject {
         if (lane.size() >= GameManager.GetInstance().getCardsPerRow()) {
             return new Status(StatusCode.kOutOfRange, "Minion exceeds card limit on associated row.");
         }
-        Minion minion = new Minion(minionData, this);
+        Minion minion = Minion.BuildMinion(minionData, this);
         minion.setParent(this);
         lane.add(minion);
         return Status.ok();
@@ -45,6 +44,10 @@ public class Army extends GameObject {
         } else if (minion.isTank()) {
           tankLane.remove(minion);
         }
+    }
+
+    void onHeroDied() {
+        GameManager.GetInstance().onPlayerLost(this.getParent().<Player>getAs());
     }
 
     // Return the Minion at coords. Coords must be in local space. If Minion not found return Status.
@@ -64,6 +67,7 @@ public class Army extends GameObject {
     }
 
     public Hero getHero() { return hero; }
+    public void setHero(Hero hero) { this.hero = hero; }
     public ArrayList<Minion> getDdLane() { return ddLane; }
     public ArrayList<Minion> getTankLane() { return tankLane; }
     public boolean hasTanks() { return !tankLane.isEmpty(); }

@@ -4,6 +4,6 @@ import status.Status;
 
 @FunctionalInterface
 public interface Ability {
-    Status UseAbility(Warrior card);
+    void useAbility(CasterMinion caster, Minion target);
 }
 

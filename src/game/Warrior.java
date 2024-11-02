@@ -34,7 +34,11 @@ public abstract class Warrior extends GameObject {
     }
 
     public void OnAttacked(int damage) {
+        System.out.println("ATTACKED " + getName());
+        System.out.println(health);
         health = Clamp(health - damage, 0, data.getHealth());
+        System.out.println(health);
+        System.out.println(damage);
         if (health <= 0) {
             OnDied();
         }

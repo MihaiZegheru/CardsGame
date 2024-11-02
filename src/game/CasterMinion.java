@@ -6,7 +6,7 @@ import status.StatusCode;
 
 public class CasterMinion extends Minion implements Caster {
 
-    public CasterMinion(CasterMinionData data, Army army) {
+    protected CasterMinion(CasterMinionData data, Army army) {
         super(data, army);
     }
 
@@ -17,8 +17,7 @@ public class CasterMinion extends Minion implements Caster {
         if (getIsFrozen()) {
             return new Status(StatusCode.kAborted, "Attacker card is frozen.");
         }
-        ((CasterMinionData)data).getAbility().UseAbility(this);
-//        minion.OnAttacked(attackDamage);
+        ((CasterMinionData)data).getAbility().useAbility(this, minion);
         hasAttacked = true;
         return Status.ok();
     }

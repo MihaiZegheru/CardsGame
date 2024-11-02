@@ -40,6 +40,16 @@ public class Game extends GameObject{
         return minion.Attack(defenderMinion);
     }
 
+    public Status attackHero(Player attacker, Minion minion) {
+        Player defender = GameManager.GetInstance().getOtherPlayer(attacker);
+        Hero enemyHero = defender.getArmy().getHero();
+        System.out.println(defender.getArmy());
+//        if (defender.getArmy().hasTanks()) {
+//            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
+//        }
+        return minion.Attack(enemyHero);
+    }
+
     public Status CastAt(Player caster, Minion minion, Coordinates targetCoords) {
         if (minion.getData().getType().is(WarriorType.kAttacker) != targetCoords.getIsEnemyPosition()) {
             return new Status(StatusCode.kAborted, targetCoords.getIsEnemyPosition()
@@ -56,9 +66,6 @@ public class Game extends GameObject{
         }
 
         Minion targetMinion = targetMinionStatus.unwrap();
-        if (targetCoords.getIsEnemyPosition() && target.getArmy().hasTanks() && !targetMinion.isTank()) {
-            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
-        }
         return minion.<CasterMinion>getAs().cast(targetMinion);
     }
 

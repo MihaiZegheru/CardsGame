@@ -8,7 +8,6 @@ public abstract class GameObject {
 
     GameObject() {
         GameManager.GetInstance().RegisterGameObject(this);
-        BeginPlay();
     }
     abstract void BeginPlay();
     abstract void TickRound();

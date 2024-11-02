@@ -6,4 +6,10 @@ public class Math {
         else if (val.compareTo(max) > 0) return max;
         else return val;
     }
+
+    public static <T> void Swap(T a, T b) {
+        T aux = a;
+        a = b;
+        b = aux;
+    }
 }

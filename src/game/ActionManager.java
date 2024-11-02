@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
 import fileio.Coordinates;
 import status.Status;
+import status.StatusCode;
 import status.StatusOr;
 
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class ActionManager {
                 yield Optional.empty();
             }
             case "placeCard" -> Optional.ofNullable(PlaceCard(action, objectNode));
+            case "useAttackHero" -> Optional.ofNullable(CardAttackHero(action, objectNode));
             default -> {
                 System.out.println("Action " + action.getCommand() + " not implemented yet.");
                 yield Optional.empty();
@@ -59,7 +61,7 @@ public class ActionManager {
         }
         objectNode.put("playerIdx", action.getPlayerIdx());
         ObjectMapper objectMapper = new ObjectMapper();
-        objectNode.put("output", objectMapper.valueToTree(player.unwrap().getHeroData()));
+        objectNode.put("output", objectMapper.valueToTree(player.unwrap().getArmy().getHero()));
         return objectNode;
     }
 
@@ -133,7 +135,8 @@ public class ActionManager {
     }
 
     private static ObjectNode CardUsesAbility(ActionsInput action, ObjectNode objectNode) {
-        Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
+        Status response = GameManager.GetInstance().useMinionAbility(action.getCardAttacker(),
+                action.getCardAttacked());
         if (response.isOk()) {
             return null;
         }
@@ -144,4 +147,18 @@ public class ActionManager {
         return objectNode;
     }
 
+    private static ObjectNode CardAttackHero(ActionsInput action, ObjectNode objectNode) {
+        Status response = GameManager.GetInstance().useMinionAttackHero(action.getCardAttacker());
+        if (response.isOk()) {
+            return null;
+        } else if (response.equals(new Status(StatusCode.kEnded))) {
+            objectNode.remove("command");
+            objectNode.put("gameEnded", response.toString());
+            return objectNode;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectNode.put("cardAttacker", objectMapper.valueToTree(action.getCardAttacker()));
+        objectNode.put("error", response.toString());
+        return objectNode;
+    }
 }

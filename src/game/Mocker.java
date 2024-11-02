@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.*;
 import game.datacollections.*;
+import status.StatusOr;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
+import static game.AbilityHandler.ResolveAbility;
+import static java.lang.System.exit;
 
 public class Mocker {
     // TODO: Return a game-end object.
@@ -16,7 +20,7 @@ public class Mocker {
     public static ArrayNode Mock(Input descriptor, ObjectMapper objectMapper) {
         if (descriptor == null) {
             System.out.println("Input Descriptor not loaded.");
-            System.exit(-1);
+            exit(-1);
         }
 
         ArrayNode arrayNode = objectMapper.createArrayNode();
@@ -55,10 +59,12 @@ public class Mocker {
             for (int j = 0; j < input.getNrCardsInDeck(); ++j) {
                 CardInput currCardInput = input.getDecks().get(i).get(j);
                 if (WarriorType.ResolveWarriorType(currCardInput.getName()).is(WarriorType.kCaster)) {
-                    // TODO: Add abilities
-                    Ability dummyAbility = (a) -> { return null; };
+                    StatusOr<Ability> abilityStatus = ResolveAbility(currCardInput.getName());
+                    if (!abilityStatus.isOk()) {
+                        exit(-1);
+                    }
                     minionsData.add(new CasterMinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),
-                            currCardInput.getHealth(), dummyAbility, currCardInput.getDescription(),
+                            currCardInput.getHealth(), abilityStatus.unwrap(), currCardInput.getDescription(),
                             currCardInput.getColors(), currCardInput.getName()));
                 } else {
                     minionsData.add(new MinionData(currCardInput.getMana(), currCardInput.getAttackDamage(),

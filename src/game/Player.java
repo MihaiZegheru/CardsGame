@@ -34,15 +34,17 @@ public class Player extends GameObject {
         this.deckCards.addAll(deckData.getCards());
         this.handCards = new ArrayList<>();
         this.boardCards = new ArrayList<>();
-//        this.hero = new Hero(data.getHero(), army);
         this.id = id;
-        this.army = new Army(new Hero(data.getHero(), army));
+        this.army = new Army();
         this.army.setParent(this);
-        army.setParent(this);
+        this.army.setHero(new Hero(data.getHero(), army));
     }
 
     @Override
-    void BeginPlay() {}
+    void BeginPlay() {
+        DrawCard();
+        HandleMana();
+    }
 
     @Override
     void TickRound() {
@@ -66,7 +68,6 @@ public class Player extends GameObject {
         if (handCards.get(idx).getMana() > currMana) {
             return new Status(StatusCode.kAborted, "Not enough mana to place card on table.");
         }
-
         Status placeStatus = army.PlaceMinion(handCards.get(idx));
         if (!placeStatus.isOk()) {
             return placeStatus;
@@ -89,10 +90,19 @@ public class Player extends GameObject {
         if (!minionStatus.isOk()) {
             return minionStatus;
         }
-        if (!minionStatus.unwrap().getData().getType().is(WarriorType.kCaster)) {
+        Minion minion = minionStatus.unwrap();
+        if (!minion.getData().getType().is(WarriorType.kCaster)) {
             return new StatusOr<>(StatusCode.kAborted, "Selected minion is not a caster.");
         }
-        return GameManager.GetInstance().getGame().CastAt(this, minionStatus.unwrap(), targetCoords);
+        return GameManager.GetInstance().getGame().CastAt(this, minion, targetCoords);
+    }
+
+    public Status attackHero(Coordinates attackerCoords) {
+        StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
+        if (!minion.isOk()) {
+            return minion;
+        }
+        return GameManager.GetInstance().getGame().attackHero(this, minion.unwrap());
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }
