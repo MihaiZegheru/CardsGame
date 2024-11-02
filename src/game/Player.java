@@ -91,18 +91,18 @@ public class Player extends GameObject {
             return minionStatus;
         }
         Minion minion = minionStatus.unwrap();
-        if (!minion.getData().getType().is(WarriorType.kCaster)) {
+        if (!minion.getData().getType().isAny(WarriorType.kDruid | WarriorType.kShadow)) {
             return new StatusOr<>(StatusCode.kAborted, "Selected minion is not a caster.");
         }
         return GameManager.GetInstance().getGame().CastAt(this, minion, targetCoords);
     }
 
     public Status attackHero(Coordinates attackerCoords) {
-        StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
-        if (!minion.isOk()) {
-            return minion;
+        StatusOr<Minion> minionStatus = army.getMinionAt(attackerCoords);
+        if (!minionStatus.isOk()) {
+            return minionStatus;
         }
-        return GameManager.GetInstance().getGame().attackHero(this, minion.unwrap());
+        return GameManager.GetInstance().getGame().attackHero(this, minionStatus.unwrap());
     }
 
     public List<?> getDeckCardsData() { return (List<?>) deckCards; }

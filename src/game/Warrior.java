@@ -34,7 +34,6 @@ public abstract class Warrior extends GameObject {
     }
 
     public void OnAttacked(int damage) {
-        System.out.println("ATTACKED " + getName());
         System.out.println(health);
         health = Clamp(health - damage, 0, data.getHealth());
         System.out.println(health);
@@ -57,6 +56,8 @@ public abstract class Warrior extends GameObject {
     public boolean getIsFrozen() { return isFrozen; }
     @JsonIgnore
     public CardData getData() { return data; }
+    @JsonIgnore
+    public WarriorType getType() { return data.getType(); }
 
     public void setHasAttacked(boolean hasAttacked) { this.hasAttacked = hasAttacked; }
     public void setIsFrozen(boolean isFrozen) { this.isFrozen = isFrozen; }

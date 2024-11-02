@@ -58,7 +58,8 @@ public class Mocker {
             ArrayList<MinionData> minionsData = new ArrayList<>(input.getNrCardsInDeck());
             for (int j = 0; j < input.getNrCardsInDeck(); ++j) {
                 CardInput currCardInput = input.getDecks().get(i).get(j);
-                if (WarriorType.ResolveWarriorType(currCardInput.getName()).is(WarriorType.kCaster)) {
+                if (WarriorType.ResolveWarriorType(currCardInput.getName()).isAny(WarriorType.kDruid |
+                        WarriorType.kShadow)) {
                     StatusOr<Ability> abilityStatus = ResolveAbility(currCardInput.getName());
                     if (!abilityStatus.isOk()) {
                         exit(-1);

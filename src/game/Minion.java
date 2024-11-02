@@ -28,7 +28,7 @@ public class Minion extends Warrior {
     }
 
     static Minion BuildMinion(MinionData data, Army army) {
-        if (data.getType().is(WarriorType.kCaster)) {
+        if (data.getType().isAny(WarriorType.kDruid | WarriorType.kShadow)) {
             return new CasterMinion((CasterMinionData) data, army);
         } else {
             return new Minion(data, army);
@@ -57,10 +57,6 @@ public class Minion extends Warrior {
     }
 
     public int getAttackDamage() { return attackDamage; }
-    @JsonIgnore
-    public boolean isTank() { return ((MinionData)data).getType().is(WarriorType.kTank); }
-    @JsonIgnore
-    public boolean isDd() { return ((MinionData)data).getType().is(WarriorType.kDamageDealer); }
 
     @Override
     protected void OnDied() { army.OnMinionDied(this); }

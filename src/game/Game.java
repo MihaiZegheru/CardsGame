@@ -32,10 +32,9 @@ public class Game extends GameObject{
         if (!defenderMinionStatus.isOk()) {
             return defenderMinionStatus;
         }
-
         Minion defenderMinion = defenderMinionStatus.unwrap();
-        if (defender.getArmy().hasTanks() && !defenderMinion.isTank()) {
-            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
+        if (defender.getArmy().hasTanks() && !defenderMinion.getType().is(WarriorType.kTank)) {
+            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank'.");
         }
         return minion.Attack(defenderMinion);
     }
@@ -43,16 +42,15 @@ public class Game extends GameObject{
     public Status attackHero(Player attacker, Minion minion) {
         Player defender = GameManager.GetInstance().getOtherPlayer(attacker);
         Hero enemyHero = defender.getArmy().getHero();
-        System.out.println(defender.getArmy());
-//        if (defender.getArmy().hasTanks()) {
-//            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank’.");
-//        }
+        if (defender.getArmy().hasTanks()) {
+            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank'.");
+        }
         return minion.Attack(enemyHero);
     }
 
     public Status CastAt(Player caster, Minion minion, Coordinates targetCoords) {
-        if (minion.getData().getType().is(WarriorType.kAttacker) != targetCoords.getIsEnemyPosition()) {
-            return new Status(StatusCode.kAborted, targetCoords.getIsEnemyPosition()
+        if (minion.getData().getType().is(WarriorType.kDuelist) != targetCoords.getIsEnemyPosition()) {
+            return new Status(StatusCode.kAborted, minion.getType().is(WarriorType.kDuelist)
                     ? "Attacked card does not belong to the enemy."
                     : "Attacked card does not belong to the current player.");
         }
@@ -66,15 +64,19 @@ public class Game extends GameObject{
         }
 
         Minion targetMinion = targetMinionStatus.unwrap();
+        if (!minion.getType().is(WarriorType.kDruid) && target.getArmy().hasTanks() &&
+                !targetMinion.getType().is(WarriorType.kTank)) {
+            return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank'.");
+        }
         return minion.<CasterMinion>getAs().cast(targetMinion);
     }
 
     public ArrayList<ArrayList<Minion>> getBoard() {
         ArrayList<ArrayList<Minion>> board = new ArrayList<>();
-        board.add(playerTwo.getArmy().getDdLane());
-        board.add(playerTwo.getArmy().getTankLane());
-        board.add(playerOne.getArmy().getTankLane());
-        board.add(playerOne.getArmy().getDdLane());
+        board.add(playerTwo.getArmy().getBackLine());
+        board.add(playerTwo.getArmy().getFrontLine());
+        board.add(playerOne.getArmy().getFrontLine());
+        board.add(playerOne.getArmy().getBackLine());
         return board;
     }
 

@@ -111,6 +111,7 @@ public class ActionManager {
 
     private static ObjectNode CardUsesAttack(ActionsInput action, ObjectNode objectNode) {
         Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
+        System.out.println("AAAAAAAAAAA");
         if (response.isOk()) {
             return null;
         }

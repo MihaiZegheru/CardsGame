@@ -7,24 +7,25 @@ import status.StatusCode;
 import status.StatusOr;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Army extends GameObject {
-    private ArrayList<Minion> ddLane;
-    private ArrayList<Minion> tankLane;
+    private ArrayList<Minion> backLine;
+    private ArrayList<Minion> frontLine;
     private Hero hero;
 
     public Army() {
-        ddLane = new ArrayList<>();
-        tankLane = new ArrayList<>();
+        backLine = new ArrayList<>();
+        frontLine = new ArrayList<>();
     }
 
     // Returns Status for success or failure.
     public Status PlaceMinion(MinionData minionData) {
         ArrayList<Minion> lane;
-        if (minionData.getType().is(WarriorType.kDamageDealer)) {
-            lane = ddLane;
-        } else if (minionData.getType().is(WarriorType.kTank)) {
-            lane = tankLane;
+        if (minionData.getType().isAny(WarriorType.kDamageDealer | WarriorType.kDruid)) {
+            lane = backLine;
+        } else if (minionData.getType().isAny(WarriorType.kTank | WarriorType.kShadow)) {
+            lane = frontLine;
         } else {
             return new Status(StatusCode.kUnknown);
         }
@@ -39,10 +40,10 @@ public class Army extends GameObject {
     }
 
     void OnMinionDied(Minion minion) {
-        if (minion.isDd()) {
-            ddLane.remove(minion);
-        } else if (minion.isTank()) {
-          tankLane.remove(minion);
+        if (minion.getType().is(WarriorType.kDamageDealer | WarriorType.kDruid)) {
+            backLine.remove(minion);
+        } else if (minion.getType().is(WarriorType.kTank | WarriorType.kShadow)) {
+          frontLine.remove(minion);
         }
     }
 
@@ -58,27 +59,35 @@ public class Army extends GameObject {
         }
 
         if (coords.getX() == 0) {
-            return new StatusOr<>(ddLane.get(coords.getY()));
+            return new StatusOr<>(backLine.get(coords.getY()));
         }
         if (coords.getX() == 1) {
-            return new StatusOr<>(tankLane.get(coords.getY()));
+            return new StatusOr<>(frontLine.get(coords.getY()));
         }
         return new StatusOr<>(StatusCode.kUnknown);
     }
 
     public Hero getHero() { return hero; }
     public void setHero(Hero hero) { this.hero = hero; }
-    public ArrayList<Minion> getDdLane() { return ddLane; }
-    public ArrayList<Minion> getTankLane() { return tankLane; }
-    public boolean hasTanks() { return !tankLane.isEmpty(); }
-    public boolean hasDamageDealers() { return !ddLane.isEmpty(); }
+    public ArrayList<Minion> getBackLine() { return backLine; }
+    public ArrayList<Minion> getFrontLine() { return frontLine; }
+    public boolean hasTanks() {
+        AtomicBoolean isTank = new AtomicBoolean(false);
+        frontLine.forEach((minion) -> {
+            if (minion.getType().is(WarriorType.kTank)) {
+                isTank.set(true);
+            }
+        });
+        return isTank.get();
+    }
+    public boolean hasDamageDealers() { return !backLine.isEmpty(); }
 
     private Status validCoords(Coordinates coords) {
         if (coords.getX() > 1) {
             return new Status(StatusCode.kOutOfRange, "Coordinated do not belong to you.");
-        } else if (coords.getX() == 0 && ddLane.size() <= coords.getY()) {
+        } else if (coords.getX() == 0 && backLine.size() <= coords.getY()) {
             return new Status(StatusCode.kAborted, "No card available at that position.");
-        } else if (coords.getX() == 1 && tankLane.size() <= coords.getY()) {
+        } else if (coords.getX() == 1 && frontLine.size() <= coords.getY()) {
             return new Status(StatusCode.kAborted, "No card available at that position.");
         }
         return Status.ok();
