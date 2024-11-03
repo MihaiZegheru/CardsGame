@@ -22,6 +22,9 @@ public class Game extends GameObject{
     @Override
     void TickRound() {}
 
+    @Override
+    void TickTurn() {}
+
     public Status AttackAt(Player attacker, Minion minion, Coordinates defenderCoords) {
         if (!defenderCoords.getIsEnemyPosition()) {
             return new Status(StatusCode.kAborted, "Attacked card does not belong to the enemy.");
@@ -68,7 +71,25 @@ public class Game extends GameObject{
                 !targetMinion.getType().is(WarriorType.kTank)) {
             return new Status(StatusCode.kAborted, "Attacked card is not of type 'Tank'.");
         }
-        return minion.<CasterMinion>getAs().cast(targetMinion);
+        ArrayList<Minion> targetMinions = new ArrayList<>();
+        targetMinions.add(targetMinion);
+        return minion.<CasterMinion>getAs().cast(targetMinions);
+    }
+
+    public Status HeroCastAt(Player caster, Hero hero, Coordinates targetCoords) {
+        // TODO: Remove check after submission
+        if (hero.getHasAttacked()) {
+            return new Status(StatusCode.kAborted, "Hero has already attacked this turn.");
+        }
+        if (hero.getData().getType().is(WarriorType.kDuelist) != targetCoords.getIsEnemyPosition()) {
+            return new Status(StatusCode.kAborted, hero.getType().is(WarriorType.kDuelist)
+                    ? "Selected row does not belong to the enemy."
+                    : "Selected row does not belong to the current player.");
+        }
+        Player target = targetCoords.getIsEnemyPosition()
+                ? GameManager.GetInstance().getOtherPlayer(caster)
+                : caster;
+        return hero.<Hero>getAs().cast(target.getArmy().getLineAt(targetCoords.getX()));
     }
 
     public ArrayList<ArrayList<Minion>> getBoard() {

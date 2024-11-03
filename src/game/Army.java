@@ -40,9 +40,9 @@ public class Army extends GameObject {
     }
 
     void OnMinionDied(Minion minion) {
-        if (minion.getType().is(WarriorType.kDamageDealer | WarriorType.kDruid)) {
+        if (minion.getType().isAny(WarriorType.kDamageDealer | WarriorType.kDruid)) {
             backLine.remove(minion);
-        } else if (minion.getType().is(WarriorType.kTank | WarriorType.kShadow)) {
+        } else if (minion.getType().isAny(WarriorType.kTank | WarriorType.kShadow)) {
           frontLine.remove(minion);
         }
     }
@@ -71,6 +71,7 @@ public class Army extends GameObject {
     public void setHero(Hero hero) { this.hero = hero; }
     public ArrayList<Minion> getBackLine() { return backLine; }
     public ArrayList<Minion> getFrontLine() { return frontLine; }
+    public ArrayList<Minion> getLineAt(int idx) { return idx == 1 ? frontLine : backLine; }
     public boolean hasTanks() {
         AtomicBoolean isTank = new AtomicBoolean(false);
         frontLine.forEach((minion) -> {
@@ -100,6 +101,11 @@ public class Army extends GameObject {
 
     @Override
     void TickRound() {
+
+    }
+
+    @Override
+    void TickTurn() {
 
     }
 }

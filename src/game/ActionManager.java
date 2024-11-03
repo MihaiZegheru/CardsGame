@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
 import fileio.Coordinates;
+import game.datacollections.MinionData;
 import status.Status;
 import status.StatusCode;
 import status.StatusOr;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static java.lang.System.exit;
@@ -25,6 +27,7 @@ public class ActionManager {
             case "getCardAtPosition" -> Optional.of(GetCardAtPosition(action, objectNode));
             case "getCardsInHand" -> Optional.of(GetCardsInHand(action, objectNode));
             case "getCardsOnTable" -> Optional.of(GetCardsOnTable(action, objectNode));
+            case "getFrozenCardsOnTable" -> Optional.of(GetFrozenCardsOnTable(action, objectNode));
             case "getPlayerDeck" -> Optional.of(GetPlayerDeck(action, objectNode));
             case "getPlayerHero" -> Optional.of(GetPlayerHero(action, objectNode));
             case "getPlayerMana" -> Optional.of(GetPlayerMana(action, objectNode));
@@ -35,6 +38,7 @@ public class ActionManager {
             }
             case "placeCard" -> Optional.ofNullable(PlaceCard(action, objectNode));
             case "useAttackHero" -> Optional.ofNullable(CardAttackHero(action, objectNode));
+            case "useHeroAbility" -> Optional.ofNullable(HeroUsesAbility(action, objectNode));
             default -> {
                 System.out.println("Action " + action.getCommand() + " not implemented yet.");
                 yield Optional.empty();
@@ -111,7 +115,6 @@ public class ActionManager {
 
     private static ObjectNode CardUsesAttack(ActionsInput action, ObjectNode objectNode) {
         Status response = GameManager.GetInstance().UseMinionAttack(action.getCardAttacker(), action.getCardAttacked());
-        System.out.println("AAAAAAAAAAA");
         if (response.isOk()) {
             return null;
         }
@@ -162,4 +165,33 @@ public class ActionManager {
         objectNode.put("error", response.toString());
         return objectNode;
     }
+
+    private static ObjectNode HeroUsesAbility(ActionsInput action, ObjectNode objectNode) {
+        Coordinates coords = new Coordinates(action.getAffectedRow(), 0);
+        Status response = GameManager.GetInstance().useHeroAbility(coords);
+        if (response.isOk()) {
+            return null;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectNode.put("affectedRow", objectMapper.valueToTree(action.getAffectedRow()));
+        objectNode.put("error", response.toString());
+        return objectNode;
+    }
+
+    private static ObjectNode GetFrozenCardsOnTable(ActionsInput action, ObjectNode objectNode) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayList<ArrayList<Minion>> minions = GameManager.GetInstance().getGame().getBoard();
+        ArrayList<Minion> frozenMinions = new ArrayList<>();
+        for (ArrayList<Minion> row : minions) {
+            for (Minion minion : row) {
+                if (minion.getIsFrozen()) {
+                    frozenMinions.add(minion);
+                }
+            }
+        }
+        ArrayNode arrayNode = objectMapper.valueToTree(frozenMinions);
+        objectNode.put("output", arrayNode);
+        return objectNode;
+    }
 }
+

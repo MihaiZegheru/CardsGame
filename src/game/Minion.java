@@ -15,6 +15,16 @@ public class Minion extends Warrior {
         this.attackDamage = data.getAttackDamage();
     }
 
+    @Override
+    void TickTurn() {
+        if (isFrozen) {
+            frozenTimer--;
+        }
+        if (frozenTimer == 0) {
+            isFrozen = false;
+        }
+    }
+
     Status Attack(Warrior warrior) {
         if (getHasAttacked()) {
             return new Status(StatusCode.kAborted, "Attacker card has already attacked this turn.");
@@ -35,14 +45,10 @@ public class Minion extends Warrior {
         }
     }
 
-    void onReceivedWeakKnees(int castStrength) {
-        attackDamage = Math.Clamp(attackDamage - castStrength, 0, attackDamage);
+    void onReceivedWeakKnees() { attackDamage = Math.Clamp(attackDamage - 2, 0, attackDamage); }
+    void onReceivedSkyjack(int newHealth) {
+        health = newHealth;
     }
-
-    void onReceivedSkyjack(int castStrength) {
-        health = castStrength;
-    }
-
     void onReceivedShapeshift() {
         int aux = attackDamage;
         attackDamage = health;
@@ -51,10 +57,11 @@ public class Minion extends Warrior {
             OnDied();
         }
     }
-
-    void onReceivedGodsPlan(int castStrength) {
-        health += castStrength;
-    }
+    void onReceivedGodsPlan() { health += 2; }
+    void onReceivedSubZero() { isFrozen = true; frozenTimer = 2; }
+    void onReceivedLowBlow() { health = 0; OnDied(); }
+    void onReceivedEarthBorn() { health += 1; }
+    void onReceivedBloodThirst() { attackDamage += 1; }
 
     public int getAttackDamage() { return attackDamage; }
 

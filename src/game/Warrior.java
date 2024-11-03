@@ -13,6 +13,7 @@ public abstract class Warrior extends GameObject {
     protected int health;
     protected boolean hasAttacked;
     protected boolean isFrozen;
+    protected int frozenTimer;
     protected Army army;
 
     public Warrior(CardData data, Army army) {
@@ -22,6 +23,7 @@ public abstract class Warrior extends GameObject {
         this.hasAttacked = false;
         this.isFrozen = false;
         this.army = army;
+        this.frozenTimer = 0;
     }
 
     @Override
@@ -30,14 +32,13 @@ public abstract class Warrior extends GameObject {
     @Override
     void TickRound() {
         hasAttacked = false;
-        isFrozen = false;
     }
 
+    @Override
+    void TickTurn() {}
+
     public void OnAttacked(int damage) {
-        System.out.println(health);
         health = Clamp(health - damage, 0, data.getHealth());
-        System.out.println(health);
-        System.out.println(damage);
         if (health <= 0) {
             OnDied();
         }

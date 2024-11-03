@@ -83,7 +83,11 @@ public class Mocker {
     }
 
     private static HeroData BuildHeroData(CardInput heroDescriptor) {
-        return new HeroData(heroDescriptor.getMana(), heroDescriptor.getDescription(), heroDescriptor.getColors(),
-                heroDescriptor.getName());
+        StatusOr<Ability> abilityStatus = ResolveAbility(heroDescriptor.getName());
+        if (!abilityStatus.isOk()) {
+            exit(-1);
+        }
+        return new HeroData(heroDescriptor.getMana(), abilityStatus.unwrap(), heroDescriptor.getDescription(),
+                heroDescriptor.getColors(), heroDescriptor.getName());
     }
 }

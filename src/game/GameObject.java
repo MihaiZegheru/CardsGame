@@ -11,6 +11,7 @@ public abstract class GameObject {
     }
     abstract void BeginPlay();
     abstract void TickRound();
+    abstract void TickTurn();
 
     <T> T getAs() {
         return (T)this;

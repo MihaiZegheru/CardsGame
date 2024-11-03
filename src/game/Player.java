@@ -52,7 +52,15 @@ public class Player extends GameObject {
         HandleMana();
     }
 
+    @Override
+    void TickTurn() {
+
+    }
+
     public void DrawCard() {
+        if (deckCards.isEmpty()) {
+            return;
+        }
         handCards.add(deckCards.poll());
     }
 
@@ -95,6 +103,19 @@ public class Player extends GameObject {
             return new StatusOr<>(StatusCode.kAborted, "Selected minion is not a caster.");
         }
         return GameManager.GetInstance().getGame().CastAt(this, minion, targetCoords);
+    }
+
+    public Status useHeroAbility(Coordinates targetCoords) {
+        Hero hero = army.getHero();
+        if (hero.getMana() > currMana) {
+            return new Status(StatusCode.kAborted, "Not enough mana to use hero's ability.");
+        }
+        Status heroCastStatus = GameManager.GetInstance().getGame().HeroCastAt(this, hero, targetCoords);
+        if (!heroCastStatus.isOk()) {
+            return  heroCastStatus;
+        }
+        currMana -= hero.getMana();
+        return Status.ok();
     }
 
     public Status attackHero(Coordinates attackerCoords) {

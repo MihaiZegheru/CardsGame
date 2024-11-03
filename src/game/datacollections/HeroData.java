@@ -1,12 +1,21 @@
 package game.datacollections;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import game.Ability;
+
 import java.util.ArrayList;
 
 public class HeroData extends CardData {
-    public HeroData(int mana, String description, ArrayList<String> colors, String name) {
-        super(mana, 30, description, colors, name);
 
+    protected final Ability ability;
+
+    public HeroData(int mana,  Ability ability, String description, ArrayList<String> colors, String name) {
+        super(mana, 30, description, colors, name);
+        this.ability = ability;
     }
+
+    @JsonIgnore
+    public Ability getAbility() { return ability; }
 
     @Override
     public String toString() {

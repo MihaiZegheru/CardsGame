@@ -37,6 +37,10 @@ public class WarriorType {
             case "The Ripper" -> kDuelist | kShadow;
             case "Miraj" -> kDuelist | kShadow;
             case "Disciple" -> kSupport | kDruid;
+            case "Lord Royce",
+                 "Empress Thorina" -> kDuelist;
+            case "King Mudface",
+                 "General Kocioraw" -> kSupport;
             default ->  {
                 System.out.println("Minion " + minionData.getName() + " implementation does not exist.");
                 yield 0;
@@ -55,6 +59,10 @@ public class WarriorType {
             case "The Ripper" -> kDuelist | kShadow;
             case "Miraj" -> kDuelist | kShadow;
             case "Disciple" -> kSupport | kDruid;
+            case "Lord Royce",
+                 "Empress Thorina" -> kDuelist;
+            case "King Mudface",
+                 "General Kocioraw" -> kSupport;
             default ->  {
                 System.out.println("Minion " + minionName + " implementation does not exist.");
                 yield 0;
