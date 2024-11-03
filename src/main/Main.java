@@ -58,8 +58,6 @@ public final class Main {
         Checker.calculateScore();
     }
 
-//    TODO: Delete
-    static int testNum = 1;
     /**
      * @param filePath1 for input file
      * @param filePath2 for output file
@@ -70,8 +68,7 @@ public final class Main {
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         Input inputData = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH + filePath1),
                 Input.class);
-        System.out.println("STARTED TEST " + testNum + "----------------------------------------");
-        testNum++;
+
         ArrayNode output = Mocker.Mock(inputData, objectMapper);
 
         /*

@@ -28,14 +28,17 @@ public class ActionManager {
             case "getCardsInHand" -> Optional.of(GetCardsInHand(action, objectNode));
             case "getCardsOnTable" -> Optional.of(GetCardsOnTable(action, objectNode));
             case "getFrozenCardsOnTable" -> Optional.of(GetFrozenCardsOnTable(action, objectNode));
+            case "getTotalGamesPlayed" -> Optional.of(getGamesPlayed(action, objectNode));
             case "getPlayerDeck" -> Optional.of(GetPlayerDeck(action, objectNode));
             case "getPlayerHero" -> Optional.of(GetPlayerHero(action, objectNode));
             case "getPlayerMana" -> Optional.of(GetPlayerMana(action, objectNode));
+            case "getPlayerOneWins" -> Optional.of(getPlayerOneWins(action, objectNode));
             case "getPlayerTurn" -> Optional.of(GetPlayerTurn(objectNode));
             case "endPlayerTurn" -> {
                 GameManager.GetInstance().EndPlayerTurn();
                 yield Optional.empty();
             }
+            case "getPlayerTwoWins" -> Optional.of(getPlayerTwoWins(action, objectNode));
             case "placeCard" -> Optional.ofNullable(PlaceCard(action, objectNode));
             case "useAttackHero" -> Optional.ofNullable(CardAttackHero(action, objectNode));
             case "useHeroAbility" -> Optional.ofNullable(HeroUsesAbility(action, objectNode));
@@ -191,6 +194,21 @@ public class ActionManager {
         }
         ArrayNode arrayNode = objectMapper.valueToTree(frozenMinions);
         objectNode.put("output", arrayNode);
+        return objectNode;
+    }
+
+    private static ObjectNode getPlayerOneWins(ActionsInput action, ObjectNode objectNode) {
+        objectNode.put("output", GameManager.GetInstance().getPlayerOneWins());
+        return objectNode;
+    }
+
+    private static ObjectNode getPlayerTwoWins(ActionsInput action, ObjectNode objectNode) {
+        objectNode.put("output", GameManager.GetInstance().getPlayerTwoWins());
+        return objectNode;
+    }
+
+    private static ObjectNode getGamesPlayed(ActionsInput action, ObjectNode objectNode) {
+        objectNode.put("output", GameManager.GetInstance().getGamesPlayed());
         return objectNode;
     }
 }

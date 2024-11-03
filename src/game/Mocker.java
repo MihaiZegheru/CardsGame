@@ -27,6 +27,7 @@ public class Mocker {
 
         PlayerData playerOneData = BuildPlayerData(descriptor.getPlayerOneDecks(), "playerOne");
         PlayerData playerTwoData = BuildPlayerData(descriptor.getPlayerTwoDecks(), "playerTwo");
+        GameManager.GetInstance().SetupTest();
 
         for (GameInput gameInput : descriptor.getGames()) {
             StartGameInput startGameState = gameInput.getStartGame();

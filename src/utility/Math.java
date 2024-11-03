@@ -1,9 +1,9 @@
 package utility;
 
 public class Math {
-    public static <T extends Comparable<T>> T Clamp(T val, T min, T max) {
-        if (val.compareTo(min) < 0) return min;
-        else if (val.compareTo(max) > 0) return max;
+    public static int Clamp(int val, int min, int max) {
+        if (val < min) return min;
+        else if (val > max) return max;
         else return val;
     }
 

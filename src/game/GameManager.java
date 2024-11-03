@@ -23,6 +23,10 @@ public class GameManager {
         return instance;
     }
 
+    private int playerOneWins;
+    private int playerTwoWins;
+    private int gamesPlayed;
+
     ArrayList<GameObject> gameObjects = new ArrayList<>();
 
     private int roundCounter;
@@ -36,6 +40,12 @@ public class GameManager {
     private Player playerTwo;
 
     boolean gameEnded;
+
+    public void SetupTest() {
+        playerOneWins = 0;
+        playerTwoWins = 0;
+        gamesPlayed = 0;
+    }
 
     public void Start(PlayerData playerOneData, int playerOneDeckIdx, PlayerData playerTwoData,
                       int playerTwoDeckIdx, int startingPlayerId, int seed) {
@@ -144,8 +154,12 @@ public class GameManager {
         Status status = getActivePlayer().attackHero(globalCoordsToPlayerSpace(attackerCoords));
         if (status.isOk() && gameEnded) {
             if (activePlayerId == 1) {
+                playerOneWins++;
+                gamesPlayed++;
                 return new Status(StatusCode.kEnded, "Player one killed the enemy hero.");
             } else {
+                playerTwoWins++;
+                gamesPlayed++;
                 return new Status(StatusCode.kEnded, "Player two killed the enemy hero.");
             }
         }
@@ -194,5 +208,8 @@ public class GameManager {
     public int getActivePlayerId() { return activePlayerId; }
     public Game getGame() { return game; }
     public int getCardsPerRow() { return cardsPerRow; }
+    public int getPlayerOneWins() { return  playerOneWins; }
+    public int getPlayerTwoWins() { return playerTwoWins; }
+    public int getGamesPlayed() { return  gamesPlayed; }
 
 }

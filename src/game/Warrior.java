@@ -38,7 +38,7 @@ public abstract class Warrior extends GameObject {
     void TickTurn() {}
 
     public void OnAttacked(int damage) {
-        health = Clamp(health - damage, 0, data.getHealth());
+        health = Clamp(health - damage, 0, Integer.MAX_VALUE);
         if (health <= 0) {
             OnDied();
         }
@@ -59,7 +59,4 @@ public abstract class Warrior extends GameObject {
     public CardData getData() { return data; }
     @JsonIgnore
     public WarriorType getType() { return data.getType(); }
-
-    public void setHasAttacked(boolean hasAttacked) { this.hasAttacked = hasAttacked; }
-    public void setIsFrozen(boolean isFrozen) { this.isFrozen = isFrozen; }
 }

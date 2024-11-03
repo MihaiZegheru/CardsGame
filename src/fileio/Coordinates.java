@@ -2,6 +2,8 @@ package fileio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Objects;
+
 public final class Coordinates {
    private int x, y;
    private boolean isEnemyPosition = false;
@@ -49,5 +51,18 @@ public final class Coordinates {
               + ", y="
               + y
               + '}';
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Coordinates that = (Coordinates) o;
+      return x == that.x && y == that.y;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(x, y);
    }
 }
