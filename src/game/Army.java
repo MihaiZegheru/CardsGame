@@ -19,6 +19,21 @@ public final class Army extends GameObject {
         frontLine = new ArrayList<>();
     }
 
+    @Override
+    void beginPlay() {
+
+    }
+
+    @Override
+    void tickRound() {
+
+    }
+
+    @Override
+    void tickTurn() {
+
+    }
+
     /**
      * Tries placing a Minion based on provided MinionData.
      *
@@ -121,20 +136,5 @@ public final class Army extends GameObject {
             return new Status(StatusCode.kAborted, "No card available at that position.");
         }
         return Status.ok();
-    }
-
-    @Override
-    void beginPlay() {
-
-    }
-
-    @Override
-    void tickRound() {
-
-    }
-
-    @Override
-    void tickTurn() {
-
     }
 }

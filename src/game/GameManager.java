@@ -126,6 +126,11 @@ public final class GameManager {
         roundCounter++;
     }
 
+    /**
+     * Register new GameObject so that all methods can be called.
+     *
+     * @param object
+     */
     void registerGameObject(final GameObject object) {
         if (gameObjects.contains(object)) {
             exit(-1);
