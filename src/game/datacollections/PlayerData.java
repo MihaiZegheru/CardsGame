@@ -2,31 +2,29 @@ package game.datacollections;
 
 import java.util.ArrayList;
 
-public class PlayerData {
+public final class PlayerData {
     private final ArrayList<DeckData> decks;
     private HeroData hero;
     private final String name;
 
-    public PlayerData(ArrayList<DeckData> decks, String name) {
+    public PlayerData(final ArrayList<DeckData> decks, final String name) {
         this.decks = decks;
         this.name = name;
     }
 
-    public ArrayList<DeckData> getDecks() { return decks; }
-    public HeroData getHero() {  return hero; }
-    public String getName() { return name; }
+    public ArrayList<DeckData> getDecks() {
+        return decks;
+    }
 
-    public void setHero(HeroData hero) { this.hero = hero; }
+    public HeroData getHero() {
+        return hero;
+    }
 
-    @Override
-    public String toString() {
-        return "{"
-                + "name="
-                + name
-                + ", Hero="
-                + hero
-                + ", decks="
-                + decks
-                + '}';
+    public String getName() {
+        return name;
+    }
+
+    public void setHero(final HeroData hero) {
+        this.hero = hero;
     }
 }

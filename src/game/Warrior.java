@@ -2,21 +2,20 @@ package game;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import game.datacollections.CardData;
-import status.Status;
 
 import java.util.ArrayList;
 
-import static utility.Math.Clamp;
+import static utility.Math.clamp;
 
 public abstract class Warrior extends GameObject {
-    protected CardData data;
+    protected final CardData data;
     protected int health;
     protected boolean hasAttacked;
     protected boolean isFrozen;
     protected int frozenTimer;
     protected Army army;
 
-    public Warrior(CardData data, Army army) {
+    public Warrior(final CardData data, final Army army) {
         super();
         this.data = data;
         this.health = data.getHealth();
@@ -27,36 +26,89 @@ public abstract class Warrior extends GameObject {
     }
 
     @Override
-    void BeginPlay() {}
+    void beginPlay() {
 
+    }
+
+    /**
+     * Call super() if overridden.
+     */
     @Override
-    void TickRound() {
+    void tickRound() {
         hasAttacked = false;
     }
 
+    /**
+     * Call super() if overridden.
+     */
     @Override
-    void TickTurn() {}
-
-    public void OnAttacked(int damage) {
-        health = Clamp(health - damage, 0, Integer.MAX_VALUE);
-        if (health <= 0) {
-            OnDied();
+    void tickTurn() {
+        if (isFrozen) {
+            frozenTimer--;
+        }
+        if (frozenTimer == 0) {
+            isFrozen = false;
         }
     }
 
-    protected void OnDied() {}
+    /**
+     * Event triggered by this being attacked.
+     *
+     * @implNote This receives damage. If health <= 0, trigger onDied event.
+     *
+     * @param damage
+     */
+    public final void onAttacked(final int damage) {
+        health = clamp(health - damage, 0, Integer.MAX_VALUE);
+        if (health <= 0) {
+            onDied();
+        }
+    }
 
-    public int getMana() { return data.getMana(); }
-    public int getHealth() { return health; }
-    public String getDescription() { return data.getDescription(); }
-    public ArrayList<String> getColors() { return data.getColors(); }
-    public String getName() { return data.getName(); }
+    /**
+     * Should be overridden by implementing death logic.
+     */
+    protected void onDied() {
+
+    }
+
+    public final int getMana() {
+        return data.getMana();
+    }
+
+    public final int getHealth() {
+        return health;
+    }
+
+    public final String getDescription() {
+        return data.getDescription();
+    }
+
+    public final ArrayList<String> getColors() {
+        return data.getColors();
+    }
+
+    public final String getName() {
+        return data.getName();
+    }
+
     @JsonIgnore
-    public boolean getHasAttacked() { return hasAttacked; }
+    public final boolean getHasAttacked() {
+        return hasAttacked;
+    }
+
     @JsonIgnore
-    public boolean getIsFrozen() { return isFrozen; }
+    public final boolean getIsFrozen() {
+        return isFrozen;
+    }
+
     @JsonIgnore
-    public CardData getData() { return data; }
+    public final CardData getData() {
+        return data;
+    }
+
     @JsonIgnore
-    public WarriorType getType() { return data.getType(); }
+    public final WarriorType getType() {
+        return data.getType();
+    }
 }

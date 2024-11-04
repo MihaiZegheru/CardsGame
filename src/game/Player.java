@@ -1,7 +1,9 @@
 package game;
 
 import fileio.Coordinates;
-import game.datacollections.*;
+import game.datacollections.DeckData;
+import game.datacollections.MinionData;
+import game.datacollections.PlayerData;
 import status.Status;
 import status.StatusCode;
 import status.StatusOr;
@@ -11,72 +13,79 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import static utility.Math.Clamp;
+import static utility.Math.clamp;
 
 
-public class Player extends GameObject {
-    private PlayerData data;
-    private int id;
+public final class Player extends GameObject {
 
     private Queue<MinionData> deckCards;
     private ArrayList<MinionData> handCards;
-    private ArrayList<Minion> boardCards;
-    private Hero hero;
 
     private Army army;
 
     private int manaFlow = 0;
     private int currMana = 0;
 
-    public Player(PlayerData data, DeckData deckData, int id) {
-        this.data = data;
+    public Player(final PlayerData data, final DeckData deckData) {
         this.deckCards = new LinkedList<>();
         this.deckCards.addAll(deckData.getCards());
         this.handCards = new ArrayList<>();
-        this.boardCards = new ArrayList<>();
-        this.id = id;
         this.army = new Army();
         this.army.setParent(this);
         this.army.setHero(new Hero(data.getHero(), army));
     }
 
     @Override
-    void BeginPlay() {
-        DrawCard();
-        HandleMana();
+    void beginPlay() {
+        drawCard();
+        handleMana();
     }
 
     @Override
-    void TickRound() {
-        DrawCard();
-        HandleMana();
+    void tickRound() {
+        drawCard();
+        handleMana();
     }
 
     @Override
-    void TickTurn() {
+    void tickTurn() {
 
     }
 
-    public void DrawCard() {
+    /**
+     * Get a card from deckCards and add it to handCard.
+     *
+     * @implNote Checks if deckCards is empty.
+     */
+    public void drawCard() {
         if (deckCards.isEmpty()) {
             return;
         }
         handCards.add(deckCards.poll());
     }
 
-    public void HandleMana() {
-        manaFlow = Clamp(manaFlow + 1, 0, 10);
+    /**
+     * Updates mana. Ticked on every round.
+     */
+    public void handleMana() {
+        manaFlow = clamp(manaFlow + 1, 0, GameManager.getInstance().getManaMaxRate());
         currMana += manaFlow;
     }
 
-    public Status PlaceCard(int idx) {
+    /**
+     * Tries placing card at idx from hand.
+     *
+     * @param idx
+     * @return Status
+     */
+    public Status placeCard(final int idx) {
         if (idx >= handCards.size()) {
             return new Status(StatusCode.kOutOfRange, "Index out of range.");
         }
         if (handCards.get(idx).getMana() > currMana) {
             return new Status(StatusCode.kAborted, "Not enough mana to place card on table.");
         }
-        Status placeStatus = army.PlaceMinion(handCards.get(idx));
+        Status placeStatus = army.placeMinion(handCards.get(idx));
         if (!placeStatus.isOk()) {
             return placeStatus;
         }
@@ -85,60 +94,90 @@ public class Player extends GameObject {
         return Status.ok();
     }
 
-    public Status UseMinionAttack(Coordinates attackerCoords, Coordinates defenderCoords) {
+    /**
+     * Tries attacking from attackerCoords at defenderCoords.
+     *
+     * @param attackerCoords
+     * @param defenderCoords
+     * @return Status
+     */
+    public Status useMinionAttack(final Coordinates attackerCoords,
+                                  final Coordinates defenderCoords) {
         StatusOr<Minion> minion = army.getMinionAt(attackerCoords);
         if (!minion.isOk()) {
             return minion;
         }
-        return GameManager.GetInstance().getGame().AttackAt(this, minion.unwrap(), defenderCoords);
+        return GameManager.getInstance().getGame().attackAt(this, minion.unwrap(),
+                defenderCoords);
     }
 
-    public Status useMinionAbility(Coordinates casterCoords, Coordinates targetCoords) {
+    /**
+     * Tries casting.using an ability from casterCoords at targetCoords.
+     *
+     * @param casterCoords
+     * @param targetCoords
+     * @return
+     */
+    public Status useMinionAbility(final Coordinates casterCoords, final Coordinates targetCoords) {
         StatusOr<Minion> minionStatus = army.getMinionAt(casterCoords);
         if (!minionStatus.isOk()) {
             return minionStatus;
         }
         Minion minion = minionStatus.unwrap();
-        if (!minion.getData().getType().isAny(WarriorType.kDruid | WarriorType.kShadow)) {
+        if (!minion.getData().getType().isAny(WarriorType.getDruid()
+                | WarriorType.getShadow())) {
             return new StatusOr<>(StatusCode.kAborted, "Selected minion is not a caster.");
         }
-        return GameManager.GetInstance().getGame().CastAt(this, minion, targetCoords);
+        return GameManager.getInstance().getGame().castAt(this, minion, targetCoords);
     }
 
-    public Status useHeroAbility(Coordinates targetCoords) {
+    /**
+     * Tries using hero ability at targetCoords.
+     *
+     * @param targetCoords Should represent a row i.e. y doesn't matter.
+     * @return Status
+     */
+    public Status useHeroAbility(final Coordinates targetCoords) {
         Hero hero = army.getHero();
         if (hero.getMana() > currMana) {
             return new Status(StatusCode.kAborted, "Not enough mana to use hero's ability.");
         }
-        Status heroCastStatus = GameManager.GetInstance().getGame().HeroCastAt(this, hero, targetCoords);
+        Status heroCastStatus = GameManager.getInstance().getGame().heroCastAt(this, hero,
+                targetCoords);
         if (!heroCastStatus.isOk()) {
-            return  heroCastStatus;
+            return heroCastStatus;
         }
         currMana -= hero.getMana();
         return Status.ok();
     }
 
-    public Status attackHero(Coordinates attackerCoords) {
+    /**
+     * Tries attacking enemy hero.
+     *
+     * @param attackerCoords
+     * @return Status
+     */
+    public Status attackHero(final Coordinates attackerCoords) {
         StatusOr<Minion> minionStatus = army.getMinionAt(attackerCoords);
         if (!minionStatus.isOk()) {
             return minionStatus;
         }
-        return GameManager.GetInstance().getGame().attackHero(this, minionStatus.unwrap());
+        return GameManager.getInstance().getGame().attackHero(this, minionStatus.unwrap());
     }
 
-    public List<?> getDeckCardsData() { return (List<?>) deckCards; }
-    public ArrayList<MinionData> getCardsInHand() { return handCards; }
-    public HeroData getHeroData() { return data.getHero(); }
-    public int getCurrMana() { return currMana; }
-    public int getId() { return id; }
-    public Army getArmy() { return army; }
+    public List<?> getDeckCardsData() {
+        return (List<?>) deckCards;
+    }
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "handCards=" + deckCards +
-                ", boardCards=" + boardCards +
-                ", hero=" + hero +
-                '}';
+    public ArrayList<MinionData> getCardsInHand() {
+        return handCards;
+    }
+
+    public int getCurrMana() {
+        return currMana;
+    }
+
+    public Army getArmy() {
+        return army;
     }
 }

@@ -2,72 +2,115 @@ package game;
 
 import game.datacollections.CardData;
 
-import static java.lang.System.exit;
+public final class WarriorType {
 
-public class WarriorType {
-    public static int kDamageDealer  = 1;       // Deals damage
-    public static int kTank          = 2;       // Takes in all damage
-    public static int kDruid         = 4;       // Casts spell, doesn't directly damage enemy
-    public static int kShadow        = 8;       // Casts spells, directly damages enemy
+    private static final int DAMAGE_DEALER = 1;       // Deals damage
+    private static final int TANK = 2;       // Takes in all damage
+    private static final int DRUID = 4;       // Casts spell, doesn't directly damage enemy
+    private static final int SHADOW = 8;       // Casts spells, directly damages enemy
+    private static final int SUPPORT = 16;      // Targets allies
+    private static final int DUELIST = 32;      // Targets enemy
 
-    public static int kSupport       = 16;      // Targets allies
-    public static int kDuelist       = 32;      // Targets enemy
-    ;
     private final int mask;
 
-    private WarriorType(int mask) {
+    private WarriorType(final int mask) {
         this.mask = mask;
     }
 
-    public boolean is(int mask) {
-        return (this.mask & mask) == mask;
+    /**
+     * Looks for perfect match by checking mask against provided mask.
+     *
+     * @param checkMask
+     * @return boolean
+     */
+    public boolean is(final int checkMask) {
+        return (this.mask & checkMask) == checkMask;
     }
 
-    public boolean isAny(int mask) {
-        return (this.mask & mask) != 0;
+    /**
+     * Looks for partial match by checking mask against provided mask.
+     *
+     * @param checkMask
+     * @return boolean
+     */
+    public boolean isAny(final int checkMask) {
+        return (this.mask & checkMask) != 0;
     }
 
-    public static WarriorType ResolveWarriorType(CardData minionData) {
-        int mask = switch (minionData.getName()) {
-            case "Sentinel" -> kDuelist | kDamageDealer;
-            case "Berserker" -> kDuelist | kDamageDealer;
-            case "Goliath" -> kDuelist | kTank;
-            case "Warden" -> kDuelist | kTank;
-            case "The Cursed One" -> kDuelist | kDruid;
-            case "The Ripper" -> kDuelist | kShadow;
-            case "Miraj" -> kDuelist | kShadow;
-            case "Disciple" -> kSupport | kDruid;
-            case "Lord Royce",
-                 "Empress Thorina" -> kDuelist;
-            case "King Mudface",
-                 "General Kocioraw" -> kSupport;
-            default ->  {
-                System.out.println("Minion " + minionData.getName() + " implementation does not exist.");
+    /**
+     * Resolves WarriorType for provided CardData.
+     *
+     * @param cardData
+     * @return WarriorType
+     */
+    public static WarriorType resolveWarriorType(final CardData cardData) {
+        int mask = switch (cardData.getName()) {
+            case "Sentinel" -> DUELIST | DAMAGE_DEALER;
+            case "Berserker" -> DUELIST | DAMAGE_DEALER;
+            case "Goliath" -> DUELIST | TANK;
+            case "Warden" -> DUELIST | TANK;
+            case "The Cursed One" -> DUELIST | DRUID;
+            case "The Ripper" -> DUELIST | SHADOW;
+            case "Miraj" -> DUELIST | SHADOW;
+            case "Disciple" -> SUPPORT | DRUID;
+            case "Lord Royce", "Empress Thorina" -> DUELIST;
+            case "King Mudface", "General Kocioraw" -> SUPPORT;
+            default -> {
+                System.out.println("Minion " + cardData.getName()
+                        + " implementation does not exist.");
                 yield 0;
             }
         };
         return new WarriorType(mask);
     }
 
-    public static WarriorType ResolveWarriorType(String minionName) {
-        int mask = switch (minionName) {
-            case "Sentinel" -> kDuelist | kDamageDealer;
-            case "Berserker" -> kDuelist | kDamageDealer;
-            case "Goliath" -> kDuelist | kTank;
-            case "Warden" -> kDuelist | kTank;
-            case "The Cursed One" -> kDuelist | kDruid;
-            case "The Ripper" -> kDuelist | kShadow;
-            case "Miraj" -> kDuelist | kShadow;
-            case "Disciple" -> kSupport | kDruid;
-            case "Lord Royce",
-                 "Empress Thorina" -> kDuelist;
-            case "King Mudface",
-                 "General Kocioraw" -> kSupport;
-            default ->  {
-                System.out.println("Minion " + minionName + " implementation does not exist.");
+    /**
+     * Resolves WarriorType for provided name.
+     *
+     * @param name
+     * @return WarriorType
+     */
+    public static WarriorType resolveWarriorType(final String name) {
+        int mask = switch (name) {
+            case "Sentinel" -> DUELIST | DAMAGE_DEALER;
+            case "Berserker" -> DUELIST | DAMAGE_DEALER;
+            case "Goliath" -> DUELIST | TANK;
+            case "Warden" -> DUELIST | TANK;
+            case "The Cursed One" -> DUELIST | DRUID;
+            case "The Ripper" -> DUELIST | SHADOW;
+            case "Miraj" -> DUELIST | SHADOW;
+            case "Disciple" -> SUPPORT | DRUID;
+            case "Lord Royce", "Empress Thorina" -> DUELIST;
+            case "King Mudface", "General Kocioraw" -> SUPPORT;
+            default -> {
+                System.out.println("Minion " + name + " implementation does not exist.");
                 yield 0;
             }
         };
         return new WarriorType(mask);
+    }
+
+    public static int getDamageDealer() {
+        return DAMAGE_DEALER;
+    }
+
+    public static int getTank() {
+        return TANK;
+    }
+
+    public static int getDruid() {
+        return DRUID;
+    }
+
+    public static int getShadow() {
+        return SHADOW;
+    }
+
+    public static int getSupport() {
+        return SUPPORT;
+    }
+
+    public static int getDuelist() {
+        return DUELIST;
     }
 }

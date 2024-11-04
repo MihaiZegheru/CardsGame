@@ -9,7 +9,7 @@ import status.StatusOr;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Army extends GameObject {
+public final class Army extends GameObject {
     private ArrayList<Minion> backLine;
     private ArrayList<Minion> frontLine;
     private Hero hero;
@@ -19,40 +19,65 @@ public class Army extends GameObject {
         frontLine = new ArrayList<>();
     }
 
-    // Returns Status for success or failure.
-    public Status PlaceMinion(MinionData minionData) {
+    /**
+     * Tries placing a Minion based on provided MinionData.
+     *
+     * @implNote  Used provided MinionData to construct a new Minion.
+     *
+     * @param minionData
+     * @return Status
+     */
+    Status placeMinion(final MinionData minionData) {
         ArrayList<Minion> lane;
-        if (minionData.getType().isAny(WarriorType.kDamageDealer | WarriorType.kDruid)) {
+        if (minionData.getType().isAny(WarriorType.getDamageDealer() | WarriorType.getDruid())) {
             lane = backLine;
-        } else if (minionData.getType().isAny(WarriorType.kTank | WarriorType.kShadow)) {
+        } else if (minionData.getType().isAny(WarriorType.getTank() | WarriorType.getShadow())) {
             lane = frontLine;
         } else {
             return new Status(StatusCode.kUnknown);
         }
 
-        if (lane.size() >= GameManager.GetInstance().getCardsPerRow()) {
-            return new Status(StatusCode.kOutOfRange, "Minion exceeds card limit on associated row.");
+        if (lane.size() >= GameManager.getInstance().getCardsPerRow()) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Minion exceeds card limit on associated row.");
         }
-        Minion minion = Minion.BuildMinion(minionData, this);
+        Minion minion = Minion.buildMinion(minionData, this);
         minion.setParent(this);
         lane.add(minion);
         return Status.ok();
     }
 
-    void OnMinionDied(Minion minion) {
-        if (minion.getType().isAny(WarriorType.kDamageDealer | WarriorType.kDruid)) {
+    void onMinionDied(final Minion minion) {
+        if (minion.getType().isAny(WarriorType.getDamageDealer()
+                | WarriorType.getDruid())) {
             backLine.remove(minion);
-        } else if (minion.getType().isAny(WarriorType.kTank | WarriorType.kShadow)) {
-          frontLine.remove(minion);
+        } else if (minion.getType().isAny(WarriorType.getTank()
+                | WarriorType.getShadow())) {
+            frontLine.remove(minion);
         }
     }
 
     void onHeroDied() {
-        GameManager.GetInstance().onPlayerLost(this.getParent().<Player>getAs());
+        GameManager.getInstance().onPlayerLost(this.getParent().<Player>getAs());
     }
 
-    // Return the Minion at coords. Coords must be in local space. If Minion not found return Status.
-    public StatusOr<Minion> getMinionAt(Coordinates coords) {
+    boolean hasTanks() {
+        AtomicBoolean isTank = new AtomicBoolean(false);
+        frontLine.forEach((minion) -> {
+            if (minion.getType().is(WarriorType.getTank())) {
+                isTank.set(true);
+            }
+        });
+        return isTank.get();
+    }
+
+    /**
+     * Tries returning the Minion at the provided Coordinates.
+     *
+     * @param coords
+     * @return
+     */
+    StatusOr<Minion> getMinionAt(final Coordinates coords) {
         Status coordsStatus = validCoords(coords);
         if (!coordsStatus.isOk()) {
             return new StatusOr<>(coordsStatus);
@@ -67,23 +92,27 @@ public class Army extends GameObject {
         return new StatusOr<>(StatusCode.kUnknown);
     }
 
-    public Hero getHero() { return hero; }
-    public void setHero(Hero hero) { this.hero = hero; }
-    public ArrayList<Minion> getBackLine() { return backLine; }
-    public ArrayList<Minion> getFrontLine() { return frontLine; }
-    public ArrayList<Minion> getLineAt(int idx) { return idx == 1 ? frontLine : backLine; }
-    public boolean hasTanks() {
-        AtomicBoolean isTank = new AtomicBoolean(false);
-        frontLine.forEach((minion) -> {
-            if (minion.getType().is(WarriorType.kTank)) {
-                isTank.set(true);
-            }
-        });
-        return isTank.get();
+    Hero getHero() {
+        return hero;
     }
-    public boolean hasDamageDealers() { return !backLine.isEmpty(); }
 
-    private Status validCoords(Coordinates coords) {
+    void setHero(final Hero hero) {
+        this.hero = hero;
+    }
+
+    ArrayList<Minion> getBackLine() {
+        return backLine;
+    }
+
+    ArrayList<Minion> getFrontLine() {
+        return frontLine;
+    }
+
+    ArrayList<Minion> getLineAt(final int idx) {
+        return idx == 1 ? frontLine : backLine;
+    }
+
+    private Status validCoords(final Coordinates coords) {
         if (coords.getX() > 1) {
             return new Status(StatusCode.kOutOfRange, "Coordinated do not belong to you.");
         } else if (coords.getX() == 0 && backLine.size() <= coords.getY()) {
@@ -95,17 +124,17 @@ public class Army extends GameObject {
     }
 
     @Override
-    void BeginPlay() {
+    void beginPlay() {
 
     }
 
     @Override
-    void TickRound() {
+    void tickRound() {
 
     }
 
     @Override
-    void TickTurn() {
+    void tickTurn() {
 
     }
 }

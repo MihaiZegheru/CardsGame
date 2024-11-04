@@ -6,5 +6,4 @@ public enum StatusCode {
     kUnknown,
     kOutOfRange,
     kEnded,
-    ;
 }

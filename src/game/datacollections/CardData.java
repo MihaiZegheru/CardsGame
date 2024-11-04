@@ -13,38 +13,38 @@ public class CardData {
     protected final String name;
     protected final WarriorType type;
 
-    public CardData(int mana, int health, String description, ArrayList<String> colors, String name) {
+    public CardData(final int mana, final int health, final String description,
+                    final ArrayList<String> colors, final String name) {
         this.mana = mana;
         this.health = health;
         this.description = description;
         this.colors = colors;
         this.name = name;
-        this.type = WarriorType.ResolveWarriorType(this);
+        this.type = WarriorType.resolveWarriorType(this);
     }
 
-    public int getMana() { return mana; }
-    public int getHealth() { return health; }
-    public String getDescription() { return description; }
-    public ArrayList<String> getColors() { return colors; }
-    public String getName() { return name; }
-    @JsonIgnore
-    public WarriorType getType() { return type; }
+    public final int getMana() {
+        return mana;
+    }
 
-    @Override
-    public String toString() {
-        return "CardData{"
-                +  "mana="
-                + mana
-                + ", health="
-                + health
-                +  ", description='"
-                + description
-                + '\''
-                + ", colors="
-                + colors
-                + ", name='"
-                + name
-                + '\''
-                + '}';
+    public final int getHealth() {
+        return health;
+    }
+
+    public final String getDescription() {
+        return description;
+    }
+
+    public final ArrayList<String> getColors() {
+        return colors;
+    }
+
+    public final String getName() {
+        return name;
+    }
+
+    @JsonIgnore
+    public final WarriorType getType() {
+        return type;
     }
 }

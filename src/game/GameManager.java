@@ -13,10 +13,18 @@ import java.util.Random;
 
 import static java.lang.System.exit;
 
-public class GameManager {
+/**
+ * Singleton that manages the game.
+ */
+public final class GameManager {
 
     private static GameManager instance = null;
-    public static GameManager GetInstance() {
+
+    /**
+     *
+     * @return instance
+     */
+    public static GameManager getInstance() {
         if (instance == null) {
             instance = new GameManager();
         }
@@ -27,33 +35,54 @@ public class GameManager {
     private int playerTwoWins;
     private int gamesPlayed;
 
-    ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private ArrayList<GameObject> gameObjects;
 
     private int roundCounter;
     private boolean turnSwitch;
     private int activePlayerId;
 
     private final int cardsPerRow = 5;
+    private final int heroMaxHP = 30;
+    private final int manaMaxRate = 10;
+    private final int playerTwoBackRowIdx = 0;
+    private final int playerTwoFrontRowIdx = 1;
+    private final int playerOneFrontRowIdx = 2;
+    private final int playerOneBackRowIdx = 3;
 
     private Game game;
     private Player playerOne;
     private Player playerTwo;
 
-    boolean gameEnded;
+    private boolean gameEnded;
 
-    public void SetupTest() {
+    /**
+     * Sets up initial values.
+     */
+    public void setupTest() {
         playerOneWins = 0;
         playerTwoWins = 0;
         gamesPlayed = 0;
     }
 
-    public void Start(PlayerData playerOneData, int playerOneDeckIdx, PlayerData playerTwoData,
-                      int playerTwoDeckIdx, int startingPlayerId, int seed) {
+    /**
+     * Builds and starts a new game.
+     *
+     * @param playerOneData
+     * @param playerOneDeckIdx
+     * @param playerTwoData
+     * @param playerTwoDeckIdx
+     * @param startingPlayerId
+     * @param seed
+     */
+    public void start(final PlayerData playerOneData, final int playerOneDeckIdx,
+                      final PlayerData playerTwoData, final int playerTwoDeckIdx,
+                      final int startingPlayerId, final int seed) {
+        this.gameObjects = new ArrayList<>();
         DeckData playerOneDeck = playerOneData.getDecks().get(playerOneDeckIdx);
-        this.playerOne = new Player(playerOneData, playerOneDeck, 1);
+        this.playerOne = new Player(playerOneData, playerOneDeck);
 
         DeckData playerTwoDeck = playerTwoData.getDecks().get(playerTwoDeckIdx);
-        this.playerTwo = new Player(playerTwoData, playerTwoDeck, 2);
+        this.playerTwo = new Player(playerTwoData, playerTwoDeck);
 
         Collections.shuffle(playerOne.getDeckCardsData(), new Random(seed));
         Collections.shuffle(playerTwo.getDeckCardsData(), new Random(seed));
@@ -64,92 +93,133 @@ public class GameManager {
         this.turnSwitch = true;
         this.roundCounter = 0;
         this.gameEnded = false;
-        BeginPlay();
+        beginPlay();
     }
 
-    private void BeginPlay() {
+    /**
+     * calls beginPlay on all GameObjects.
+     */
+    private void beginPlay() {
         for (GameObject object : gameObjects) {
-            object.BeginPlay();
+            object.beginPlay();
         }
         roundCounter++;
     }
 
-    private void TickRound() {
+    /**
+     * calls tickRound on all GameObjects. Used for round changes.
+     */
+    private void tickRound() {
         for (GameObject object : gameObjects) {
-            object.TickRound();
+            object.tickRound();
         }
         roundCounter++;
     }
 
-    private void TickTurn() {
+    /**
+     * calls tickTurn on all GameObjects. Used for turn changes.
+     */
+    private void tickTurn() {
         for (GameObject object : gameObjects) {
-            object.TickTurn();
+            object.tickTurn();
         }
         roundCounter++;
     }
 
-    void RegisterGameObject(GameObject object) {
+    void registerGameObject(final GameObject object) {
         if (gameObjects.contains(object)) {
             exit(-1);
         }
         gameObjects.add(object);
     }
 
-    public void EndPlayerTurn() {
+    /**
+     * Entry point for endPlayerTurn command.
+     */
+    public void endPlayerTurn() {
         turnSwitch = !turnSwitch;
-        TickTurn();
+        tickTurn();
         if (turnSwitch) {
-            TickRound();
+            tickRound();
         }
         activePlayerId = activePlayerId == 1 ? 2 : 1;
     }
 
-    Player getActivePlayer() {
-        return  activePlayerId == 1 ? playerOne : playerTwo;
+    /**
+     * Entry point for placeCard command.
+     *
+     * @param idx
+     * @return Status
+     */
+    public Status placeCard(final int idx) {
+        return getActivePlayer().placeCard(idx);
     }
 
-    public StatusOr<Player> getPlayerById(int id) {
-        if (id == 1) {
-            return  new StatusOr<>(playerOne);
-        } else if (id == 2) {
-            return  new StatusOr<>(playerTwo);
+    /**
+     * Entry point for useMinionAttack command.
+     *
+     * @param attackerCoords
+     * @param defenderCoords
+     * @return Status
+     */
+    public Status useMinionAttack(final Coordinates attackerCoords,
+                                  final Coordinates defenderCoords) {
+        if (activePlayerId == 1 && ((attackerCoords.getX() != playerOneFrontRowIdx
+                && attackerCoords.getX() != playerOneBackRowIdx)
+                || attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
+        } else if (activePlayerId == 2 && ((attackerCoords.getX() != playerTwoBackRowIdx
+                && attackerCoords.getX() != playerTwoFrontRowIdx)
+                || attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
         }
-        return new StatusOr<>(StatusCode.kOutOfRange);
-    }
-
-    public Status PlaceCard(int idx) { return getActivePlayer().PlaceCard(idx); }
-
-    public Status UseMinionAttack(Coordinates attackerCoords, Coordinates defenderCoords) {
-        if (activePlayerId == 1 && ((attackerCoords.getX() != 2 && attackerCoords.getX() != 3) ||
-                attackerCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
-        } else if (activePlayerId == 2 && ((attackerCoords.getX() != 0 && attackerCoords.getX() != 1) ||
-                attackerCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
-        }
-        return getActivePlayer().UseMinionAttack(globalCoordsToPlayerSpace(attackerCoords),
+        return getActivePlayer().useMinionAttack(globalCoordsToPlayerSpace(attackerCoords),
                 globalCoordsToPlayerSpace(defenderCoords));
     }
 
-    public Status useMinionAbility(Coordinates casterCoords, Coordinates targetCoords) {
-        if (activePlayerId == 1 && ((casterCoords.getX() != 2 && casterCoords.getX() != 3) ||
-                casterCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
-        } else if (activePlayerId == 2 && ((casterCoords.getX() != 0 && casterCoords.getX() != 1) ||
-                casterCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
+    /**
+     * Entry point for useMinionAbility command.
+     *
+     * @param casterCoords
+     * @param targetCoords
+     * @return Status
+     */
+    public Status useMinionAbility(final Coordinates casterCoords,
+                                   final Coordinates targetCoords) {
+        if (activePlayerId == 1 && ((casterCoords.getX() != playerOneFrontRowIdx
+                && casterCoords.getX() != playerOneBackRowIdx)
+                || casterCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
+        } else if (activePlayerId == 2 && ((casterCoords.getX() != playerTwoBackRowIdx
+                && casterCoords.getX() != playerTwoFrontRowIdx)
+                || casterCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
         }
         return getActivePlayer().useMinionAbility(globalCoordsToPlayerSpace(casterCoords),
                 globalCoordsToPlayerSpace(targetCoords));
     }
 
-    public Status useMinionAttackHero(Coordinates attackerCoords) {
-        if (activePlayerId == 1 && ((attackerCoords.getX() != 2 && attackerCoords.getX() != 3) ||
-                attackerCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
-        } else if (activePlayerId == 2 && ((attackerCoords.getX() != 0 && attackerCoords.getX() != 1) ||
-                attackerCoords.getY() >= cardsPerRow)) {
-            return new Status(StatusCode.kOutOfRange, "Provided attacker coordinates exceed player's limit.");
+    /**
+     * Entry point for useMinionAttackHero command.
+     *
+     * @param attackerCoords
+     * @return Status
+     */
+    public Status useMinionAttackHero(final Coordinates attackerCoords) {
+        if (activePlayerId == 1 && ((attackerCoords.getX() != playerOneFrontRowIdx
+                && attackerCoords.getX() != playerOneBackRowIdx)
+                || attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
+        } else if (activePlayerId == 2 && ((attackerCoords.getX() != playerTwoBackRowIdx
+                && attackerCoords.getX() != playerTwoFrontRowIdx)
+                || attackerCoords.getY() >= cardsPerRow)) {
+            return new Status(StatusCode.kOutOfRange,
+                    "Provided attacker coordinates exceed player's limit.");
         }
         Status status = getActivePlayer().attackHero(globalCoordsToPlayerSpace(attackerCoords));
         if (status.isOk() && gameEnded) {
@@ -166,50 +236,101 @@ public class GameManager {
         return status;
     }
 
-    public Status useHeroAbility(Coordinates targetCoords) {
+    /**
+     * Entry point for useHeroAbility command.
+     *
+     * @param targetCoords
+     * @return Status
+     */
+    public Status useHeroAbility(final Coordinates targetCoords) {
         return getActivePlayer().useHeroAbility(globalCoordsToPlayerSpace(targetCoords));
     }
 
-    public StatusOr<Minion> GetCardAt(Coordinates coords) {
-        if (coords.getX() == 0 || coords.getX() == 1) {
+    StatusOr<Minion> getCardAt(final Coordinates coords) {
+        if (coords.getX() == playerTwoBackRowIdx || coords.getX() == playerTwoFrontRowIdx) {
             return playerTwo.getArmy().getMinionAt(globalCoordsToPlayerSpace(coords));
-        } else if (coords.getX() == 2 || coords.getX() == 3) {
+        } else if (coords.getX() == playerOneFrontRowIdx || coords.getX() == playerOneBackRowIdx) {
             return playerOne.getArmy().getMinionAt(globalCoordsToPlayerSpace(coords));
         }
         return new StatusOr<>(StatusCode.kOutOfRange, "Out of the board.");
     }
 
-    public Coordinates globalCoordsToPlayerSpace(Coordinates coords) {
+    /**
+     * Converts global coords int local player space. BackLine => 0, FrontLine => 1.
+     *
+     * @param coords
+     * @return Coordinates
+     */
+    public Coordinates globalCoordsToPlayerSpace(final Coordinates coords) {
         Coordinates newCoords = new Coordinates();
         newCoords.setX(coords.getX());
         newCoords.setY(coords.getY());
-        if (activePlayerId == 1 && (newCoords.getX() == 0 || newCoords.getX() == 1)) {
+        if (activePlayerId == 1 && (newCoords.getX() == playerTwoBackRowIdx
+                || newCoords.getX() == playerTwoFrontRowIdx)) {
             newCoords.setIsEnemyPosition(true);
-        } else if (activePlayerId == 2 && (newCoords.getX() == 2 || newCoords.getX() == 3)) {
+        } else if (activePlayerId == 2 && (newCoords.getX() == playerOneFrontRowIdx
+                || newCoords.getX() == playerOneBackRowIdx)) {
             newCoords.setIsEnemyPosition(true);
         }
 
-        if (newCoords.getX() == 3) {
+        if (newCoords.getX() == playerOneBackRowIdx) {
             newCoords.setX(0);
-        } else if (newCoords.getX() == 2) {
+        } else if (newCoords.getX() == playerOneFrontRowIdx) {
             newCoords.setX(1);
         }
         return newCoords;
     }
 
-    Player getOtherPlayer(Player self) {
-        return self == playerOne ? playerTwo : playerOne;
+    StatusOr<Player> getPlayerById(final int id) {
+        if (id == 1) {
+            return new StatusOr<>(playerOne);
+        } else if (id == 2) {
+            return new StatusOr<>(playerTwo);
+        }
+        return new StatusOr<>(StatusCode.kOutOfRange);
     }
 
-    void onPlayerLost(Player player) {
+    Player getActivePlayer() {
+        return activePlayerId == 1 ? playerOne : playerTwo;
+    }
+
+    Player getOtherPlayer(final Player player) {
+        return player == playerOne ? playerTwo : playerOne;
+    }
+
+    void onPlayerLost(final Player player) {
         gameEnded = true;
     }
 
-    public int getActivePlayerId() { return activePlayerId; }
-    public Game getGame() { return game; }
-    public int getCardsPerRow() { return cardsPerRow; }
-    public int getPlayerOneWins() { return  playerOneWins; }
-    public int getPlayerTwoWins() { return playerTwoWins; }
-    public int getGamesPlayed() { return  gamesPlayed; }
+    public int getActivePlayerId() {
+        return activePlayerId;
+    }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public int getCardsPerRow() {
+        return cardsPerRow;
+    }
+
+    public int getPlayerOneWins() {
+        return playerOneWins;
+    }
+
+    public int getPlayerTwoWins() {
+        return playerTwoWins;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public int getHeroMaxHP() {
+        return heroMaxHP;
+    }
+
+    public int getManaMaxRate() {
+        return manaMaxRate;
+    }
 }

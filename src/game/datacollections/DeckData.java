@@ -2,20 +2,14 @@ package game.datacollections;
 
 import java.util.ArrayList;
 
-public class DeckData {
-    protected final ArrayList<MinionData> cards;
+public final class DeckData {
+    private final ArrayList<MinionData> cards;
 
-    public DeckData(ArrayList<MinionData> cards) {
+    public DeckData(final ArrayList<MinionData> cards) {
         this.cards = cards;
     }
 
-    public ArrayList<MinionData> getCards() { return cards; }
-
-    @Override
-    public String toString() {
-        return "{"
-                + ", cards="
-                + cards
-                + '}';
+    public ArrayList<MinionData> getCards() {
+        return cards;
     }
 }

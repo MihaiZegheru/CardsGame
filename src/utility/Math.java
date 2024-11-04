@@ -1,15 +1,17 @@
 package utility;
 
-public class Math {
-    public static int Clamp(int val, int min, int max) {
-        if (val < min) return min;
-        else if (val > max) return max;
-        else return val;
+public final class Math {
+    /**
+     * Clamps int val between min and max.
+     *
+     * @param val
+     * @param min
+     * @param max
+     * @return int
+     */
+    public static int clamp(final int val, final int min, final int max) {
+        return val < min ? min : java.lang.Math.min(val, max);
     }
 
-    public static <T> void Swap(T a, T b) {
-        T aux = a;
-        a = b;
-        b = aux;
-    }
+    private Math() { }
 }

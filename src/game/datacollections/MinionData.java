@@ -1,38 +1,17 @@
 package game.datacollections;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import game.WarriorType;
-
 import java.util.ArrayList;
 
 public class MinionData extends CardData {
     protected final int attackDamage;
 
-    public MinionData(int mana, int attackDamage, int health, String description, ArrayList<String> colors,
-                      String name) {
+    public MinionData(final int mana, final int attackDamage, final int health,
+                      final String description, final ArrayList<String> colors, final String name) {
         super(mana, health, description, colors, name);
         this.attackDamage = attackDamage;
     }
 
-    public int getAttackDamage() { return attackDamage; }
-
-    @Override
-    public String toString() {
-        return "{"
-                +  "mana="
-                + mana
-                +  ", attackDamage="
-                + attackDamage
-                + ", health="
-                + health
-                +  ", description='"
-                + description
-                + '\''
-                + ", colors="
-                + colors
-                + ", name='"
-                + name
-                + '\''
-                + '}';
+    public final int getAttackDamage() {
+        return attackDamage;
     }
 }

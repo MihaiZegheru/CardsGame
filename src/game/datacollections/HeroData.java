@@ -2,36 +2,22 @@ package game.datacollections;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import game.Ability;
+import game.GameManager;
 
 import java.util.ArrayList;
 
-public class HeroData extends CardData {
+public final class HeroData extends CardData {
 
-    protected final Ability ability;
+    private final Ability ability;
 
-    public HeroData(int mana,  Ability ability, String description, ArrayList<String> colors, String name) {
-        super(mana, 30, description, colors, name);
+    public HeroData(final int mana, final Ability ability, final String description,
+                    final ArrayList<String> colors, final String name) {
+        super(mana, GameManager.getInstance().getHeroMaxHP(), description, colors, name);
         this.ability = ability;
     }
 
     @JsonIgnore
-    public Ability getAbility() { return ability; }
-
-    @Override
-    public String toString() {
-        return "HeroData{"
-                +  "mana="
-                + mana
-                + ", health="
-                + health
-                +  ", description='"
-                + description
-                + '\''
-                + ", colors="
-                + colors
-                + ", name='"
-                + name
-                + '\''
-                + '}';
+    public Ability getAbility() {
+        return ability;
     }
 }

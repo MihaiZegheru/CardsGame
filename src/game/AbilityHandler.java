@@ -1,14 +1,13 @@
 package game;
 
-import game.datacollections.CardData;
 import status.StatusCode;
 import status.StatusOr;
 
 import static java.lang.System.exit;
 
-public class AbilityHandler {
+public final class AbilityHandler {
 
-    static Ability weakKnees = (caster, targets) -> {
+    private static final Ability WEAK_KNEES = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -17,27 +16,27 @@ public class AbilityHandler {
         }
     };
 
-    static Ability skyjack = (caster, targets) -> {
+    private static final Ability SKYJACK = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
         for (var target : targets) {
-            int casterHealth = ((CasterMinion)caster).getHealth();
-            ((CasterMinion)caster).health = target.getHealth();
+            int casterHealth = ((CasterMinion) caster).getHealth();
+            ((CasterMinion) caster).health = target.getHealth();
             target.onReceivedSkyjack(casterHealth);
         }
     };
 
-    static Ability shapeshift = (caster, targets) -> {
+    private static final Ability SHAPE_SHIFT = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
         for (var target : targets) {
-            target.onReceivedShapeshift();
+            target.onReceivedShapeShift();
         }
     };
 
-    static Ability godsPlan = (caster, targets) -> {
+    private static final Ability GODS_PLAN = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -46,7 +45,7 @@ public class AbilityHandler {
         }
     };
 
-    static Ability subZero = (caster, targets) -> {
+    private static final Ability SUB_ZERO = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -55,7 +54,7 @@ public class AbilityHandler {
         }
     };
 
-    static Ability lowBlow = (caster, targets) -> {
+    private static final Ability LOW_BLOW = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -68,7 +67,7 @@ public class AbilityHandler {
         targetMinion.onReceivedLowBlow();
     };
 
-    static Ability earthBorn = (caster, targets) -> {
+    private static final Ability EARTH_BORN = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -77,7 +76,7 @@ public class AbilityHandler {
         }
     };
 
-    static Ability bloodThirst = (caster, targets) -> {
+    private static final Ability BLOOD_THIRST = (caster, targets) -> {
         if (targets.isEmpty()) {
             exit(-1);
         }
@@ -86,17 +85,25 @@ public class AbilityHandler {
         }
     };
 
-    static public StatusOr<Ability> ResolveAbility(String minionName) {
-        return switch (minionName) {
-            case "Disciple" -> new StatusOr<>(godsPlan);
-            case "Miraj" -> new StatusOr<>(skyjack);
-            case "The Cursed One" -> new StatusOr<>(shapeshift);
-            case "The Ripper" -> new StatusOr<>(weakKnees);
-            case "Lord Royce" -> new StatusOr<>(subZero);
-            case "Empress Thorina" -> new StatusOr<>(lowBlow);
-            case "King Mudface" -> new StatusOr<>(earthBorn);
-            case "General Kocioraw" -> new StatusOr<>(bloodThirst);
+    /**
+     * Tries resolving ability based on provided warrior name.
+     *
+     * @param warriorName
+     * @return StatusOr Ability
+     */
+    public static StatusOr<Ability> resolveAbility(final String warriorName) {
+        return switch (warriorName) {
+            case "Disciple" -> new StatusOr<>(GODS_PLAN);
+            case "Miraj" -> new StatusOr<>(SKYJACK);
+            case "The Cursed One" -> new StatusOr<>(SHAPE_SHIFT);
+            case "The Ripper" -> new StatusOr<>(WEAK_KNEES);
+            case "Lord Royce" -> new StatusOr<>(SUB_ZERO);
+            case "Empress Thorina" -> new StatusOr<>(LOW_BLOW);
+            case "King Mudface" -> new StatusOr<>(EARTH_BORN);
+            case "General Kocioraw" -> new StatusOr<>(BLOOD_THIRST);
             default -> new StatusOr<>(StatusCode.kUnknown);
         };
     }
+
+    private AbilityHandler() { }
 }
